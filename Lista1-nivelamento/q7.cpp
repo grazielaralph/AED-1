@@ -1,3 +1,4 @@
+//ajeitar depois 
 #include<iostream>
 const int TAM=5;
 
@@ -7,12 +8,19 @@ struct Pizza{
 	bool delivery; //true->delivery; false->para comer na pizzaria
 };
 
-void print_pizza(Pizza pizzas[], int tamanho){
-	for (int i=0; i<tamanho; i++){
-		std::cout << pizzas[i].nome << " - " << "R$" << pizzas[i].preco << " - " ;
-	std::cout << "Entrega: " << (pizzas[i].delivery?"Delivery":"Mesa")<< "\n" ;
-	}
+void print_pizza(Pizza p){
+	std::cout << p.nome << " - " << "R$" << p.preco << " - " ;
+	std::cout << "Entrega: " << (p.delivery?"Delivery":"Mesa")<< "\n" ; 
+
 }
+
+void print_pizzas(const Pizza pizzas[], int tamanho){
+	for (int i=0; i<tamanho; i++){
+		print_pizza(pizzas[i]);
+	}
+	std::cout<<std::endl;
+}
+
 
 //passagem de parametro por referencia-> no caso, a função altera o nome diretamente no endereço de memória da pizza
 //nesse exemplo, ele altera diretamente no endereço da p1
@@ -46,10 +54,10 @@ int main(){
 
 	//cardápio
 	std::cout << "------------- Cardápio de Pizzas  -------------\n";
-	print_pizza(pizzas, TAM);
+	print_pizzas(pizzas, TAM);
 	
 
-	std::cout << "\n";
+	/*std::cout << "\n";
 	std::cout<<"-----------------Atualizando Pizzas-----------------------\n";
 	std::string novo_nome = "Alho";
 	nomear_pizza(pizzas[0], novo_nome);
@@ -57,7 +65,7 @@ int main(){
 
 	novo_nome = "Atum";
 	nomear_pizza(pizzas[1], novo_nome);
-	print_pizza(pizzas, 2);
+	print_pizza(pizzas, 2);*/
 
 
 	std::cout << "\n";
@@ -67,10 +75,10 @@ int main(){
 	std::cout << "\n";
 
 	//pizzas que são delivery
-	std::cout<<"-------------------PIZZAS PARA ENTREGA--------------------\n";
+	std::cout<<"\n-------------------PIZZAS PARA ENTREGA--------------------\n";
 	for (int i=0; i<TAM; i++){
 		if(pizzas[i].delivery){
-			std::cout << pizzas[i].nome << " - " << "R$" << pizzas[i].preco << "\n";
+			print_pizza(pizzas[i]);
 		}
 	}
 	return 0;

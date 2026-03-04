@@ -62,7 +62,7 @@ int main(){
 
 	std::cout << "\n";
 	std::cout<<"-------------------TOTAL--------------------\n";
-	float valorTotal = calcula_preco(pizzas, TAM);
+	float valorTotal = calcula_preco(pizzas, TAM); //poderia passar total como parametro e alterar por referencia 
 	std::cout << "Total: " << valorTotal;
 	std::cout << "\n";
 
