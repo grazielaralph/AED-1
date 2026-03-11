@@ -1,5 +1,6 @@
 #include <iostream>
 #include <limits>
+#include <cmath> //o c indica que a biblioteca veio do c
 using namespace std;
 
 const int NIL = -1; //cte de verificacao da busca
@@ -17,19 +18,22 @@ void print(Disciplina d){
 
 
 int busca (string key, Disciplina disciplinas[], int tamanho){
-	Disciplina sentinela = {key, " ", 0};
-	disciplinas[tamanho] = sentinela;
-	int i=0;
-	while (key != disciplinas[i].codigo){
-		i++;
+	int inicio =0; //comeca pela esquerda 
+	int fim = tamanho-1; //comeca pela direita 
+
+	while (inicio<=fim){
+		int meio = floor((inicio+fim)/2);
+		if(key == disciplinas[meio].codigo){
+			return meio;
+		}else if(key < disciplinas[meio].codigo){
+			fim = meio-1;
+
+		}else{
+			inicio = meio+1;
+		}
+
 	}
-	if (i<tamanho)
-	{
-		return i;
-	}else{
-		return NIL;
-	}
-	
+	return NIL;
 }
 
 

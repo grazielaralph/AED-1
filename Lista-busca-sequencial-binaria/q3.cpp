@@ -41,20 +41,19 @@ int main(){
 
 	//instancia do vetor
 	for(int i=0; i<N; i++){
-	getline(cin, disciplinas[i].nome);
-	cin >> disciplinas[i].codigo;
-	cin >> disciplinas[i].carga_horaria;
-	cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+		getline(cin, disciplinas[i].nome);
+		cin >> disciplinas[i].codigo;
+		cin >> disciplinas[i].carga_horaria;
+		cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
 	}
 
-	cout<<"\n";
-
+	
 	//busca sequencial
 	string cod_pesquisa;
 	cin >> cod_pesquisa;
 	int pos = busca(cod_pesquisa, disciplinas, N);
 	if (pos==NIL){
-		cout << "Nenhuma disciplina com código " << cod_pesquisa << " foi encontrada.\n";
+		cout << "Nenhuma disciplina com codigo " << cod_pesquisa << " foi encontrada.\n";
 	}else{
 		print(disciplinas[pos]);
 

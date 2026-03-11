@@ -29,10 +29,10 @@ int main(){
 	disciplinas = new Disciplina[N]; //cria vetor com n disciplinas
 
 	for(int i=0; i<N; i++){
-	getline(cin, disciplinas[i].nome);
-	cin >> disciplinas[i].codigo;
-	cin >> disciplinas[i].carga_horaria;
-	 cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		getline(cin, disciplinas[i].nome);
+		cin >> disciplinas[i].codigo;
+		cin >> disciplinas[i].carga_horaria;
+	 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 	}
 
 
