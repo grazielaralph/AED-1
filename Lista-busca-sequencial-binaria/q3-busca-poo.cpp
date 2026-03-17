@@ -1,6 +1,10 @@
 #include <iostream>
 #include <limits>
 using namespace std;
+<<<<<<< Updated upstream
+=======
+const int NIL = -1; //cte de verificacao
+>>>>>>> Stashed changes
 
 class Disciplina{
 public:
@@ -18,8 +22,60 @@ public:
 	}
 
 	void print();
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 };
 
 void Disciplina::print(){
 	cout << nome << ", " << codigo << ", " << carga_horaria << "h \n";
+<<<<<<< Updated upstream
+=======
+}
+
+int busca (string key, Disciplina disciplinas[], int tamanho){
+	for (int i = 0; i < tamanho; ++i)
+	{
+		if (key==disciplinas[i].codigo)
+		{
+			return i; //se ele achar a disc, retorna a posicao e fecha a funcao 
+		}
+	}
+
+	return NIL;
+}
+
+
+int main(){
+	int N = 0;
+	cin >> N;
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+	Disciplina* disciplinas; //vetor dinamico
+	disciplinas = new Disciplina[N]; //cria vetor com n disciplinas
+
+	//instancia do array
+	for(int i=0; i<N; i++){
+		getline(cin, disciplinas[i].nome);
+		cin >> disciplinas[i].codigo;
+		cin >> disciplinas[i].carga_horaria;
+	 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	}
+
+
+	//busca sequencial
+	string cod_pesquisa;
+	cin >> cod_pesquisa;
+	int pos = busca(cod_pesquisa, disciplinas, N);
+	if (pos==NIL){
+		cout << "Nenhuma disciplina com codigo " << cod_pesquisa << " foi encontrada.\n";
+	}else{
+		disciplinas[pos].print(); //so muda que a gente vai acessar um metodo da classe e nao uma funcao global 
+	}
+	
+    
+    delete[] disciplinas;
+	return 0;
+>>>>>>> Stashed changes
 }

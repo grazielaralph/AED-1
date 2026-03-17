@@ -20,6 +20,15 @@ public:
 	void print();
 };
 
+<<<<<<< Updated upstream
+=======
+
+
+void Disciplina::print(){
+	cout << nome << ", " << codigo << ", " << carga_horaria << "h \n";
+}
+
+>>>>>>> Stashed changes
 void printDisciplinas(Disciplina disciplinas[], int tam){
 	for (int i = 0; i < tam; ++i)
 		{
@@ -28,9 +37,6 @@ void printDisciplinas(Disciplina disciplinas[], int tam){
 	
 }
 
-void Disciplina::print(){
-	cout << nome << ", " << codigo << ", " << carga_horaria << "h \n";
-}
 
 int main(){
 	int N = 0;
@@ -51,6 +57,8 @@ int main(){
 
 	//passo o vetor disciplina 
 	printDisciplinas(disciplinas, N);
+	delete[] disciplinas;
+	
 
 
 	return 0;
