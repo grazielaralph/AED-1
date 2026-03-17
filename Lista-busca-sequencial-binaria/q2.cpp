@@ -40,5 +40,9 @@ int main(){
 	printDisciplinas(disciplinas, N);
 
 
+	delete[] disciplinas;
+	disciplinas = nullptr;
+
+
 	return 0;
 }

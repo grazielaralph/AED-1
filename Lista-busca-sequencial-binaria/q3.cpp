@@ -59,6 +59,8 @@ int main(){
 
 	}
 
+	delete[] disciplinas;
+	disciplinas = nullptr;
 
 	return 0;
 }
