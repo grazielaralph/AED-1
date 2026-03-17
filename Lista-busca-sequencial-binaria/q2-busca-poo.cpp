@@ -18,10 +18,9 @@ public:
 	}
 
 	void print();
-	void printDisciplinas(Disciplina disciplinas[], int tam);
 };
 
-void Disciplina::printDisciplinas(Disciplina disciplinas[], int tam){
+void printDisciplinas(Disciplina disciplinas[], int tam){
 	for (int i = 0; i < tam; ++i)
 		{
 			disciplinas[i].print();
