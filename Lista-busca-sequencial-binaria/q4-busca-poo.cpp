@@ -3,3 +3,73 @@
 using namespace std;
 const int NIL = -1; //cte de verificacao
 
+class Disciplina{
+public:
+	//atributos
+	string codigo;
+	string nome;
+	int carga_horaria; //também pode ser short int
+
+
+	Disciplina() = default; //construtor padrao -> serve pra instancia simples sem passagem de parametro
+	Disciplina(string cod_, string nome_, int carga_horaria_){
+		codigo = cod_;
+		nome = nome_;
+		carga_horaria = carga_horaria_;
+	}
+
+	void print();
+};
+
+void Disciplina::print(){
+	cout << nome << ", " << codigo << ", " << carga_horaria << "h \n";
+}
+
+int busca (string key, Disciplina disciplinas[], int tamanho){
+	Disciplina sentinela = {key, " ", 0};
+	disciplinas[tamanho] = sentinela;
+	int i=0;
+	while (key != disciplinas[i].codigo){
+		i++;
+	}
+	if (i<tamanho)
+	{
+		return i;
+	}else{
+		return NIL;
+	}
+	
+}
+
+int main(){
+	int N = 0;
+	cin >> N;
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+	Disciplina* disciplinas; //vetor dinamico
+	disciplinas = new Disciplina[N+1]; //cria vetor com n disciplinas
+
+	//instancia do array
+	for(int i=0; i<N; i++){
+		getline(cin, disciplinas[i].nome);
+		cin >> disciplinas[i].codigo;
+		cin >> disciplinas[i].carga_horaria;
+	 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	}
+
+
+	//busca sequencial
+	string cod_pesquisa;
+	cin >> cod_pesquisa;
+	int pos = busca(cod_pesquisa, disciplinas, N);
+	if (pos==NIL){
+		cout << "Nenhuma disciplina com codigo " << cod_pesquisa << " foi encontrada.\n";
+	}else{
+		disciplinas[pos].print(); //so muda que a gente vai acessar um metodo da classe e nao uma funcao global 
+	}
+	
+    
+    delete[] disciplinas;
+	return 0;
+}
+
