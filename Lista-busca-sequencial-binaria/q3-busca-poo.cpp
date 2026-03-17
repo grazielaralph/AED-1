@@ -1,10 +1,7 @@
 #include <iostream>
 #include <limits>
 using namespace std;
-<<<<<<< Updated upstream
-=======
 const int NIL = -1; //cte de verificacao
->>>>>>> Stashed changes
 
 class Disciplina{
 public:
@@ -22,16 +19,10 @@ public:
 	}
 
 	void print();
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 };
 
 void Disciplina::print(){
 	cout << nome << ", " << codigo << ", " << carga_horaria << "h \n";
-<<<<<<< Updated upstream
-=======
 }
 
 int busca (string key, Disciplina disciplinas[], int tamanho){
@@ -77,5 +68,4 @@ int main(){
     
     delete[] disciplinas;
 	return 0;
->>>>>>> Stashed changes
 }
