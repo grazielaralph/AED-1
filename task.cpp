@@ -8,17 +8,16 @@ private:
 	string description;
 	string datetime;
 	bool done;
-
 public:
 	Task()=default;
 	Task(string desc, string dt):
 		description(desc),
 		datetime(dt),
 		done(false){}
-
 	void markAsDone();
 	void markAsNotDone();
 	bool isDone(); //isDone() tambem é considerado um método get, porem com nome diferente rs
+	
 	//get -> metodo para acessar os atributos que estao privados 
 	string get_description();
 	string get_datetime();
@@ -52,7 +51,9 @@ private:
 	int length = 0;
 	int max_length = 0;
 public:
+	//construtores
 	ToDoList()=default;
+
 	ToDoList(int max_length_):max_length(max_length_){
 		itens = new Task[max_length];
 		length=0;
@@ -60,23 +61,23 @@ public:
 	
 
 	//destrutor pra matar minha listinha procrastinada
-	~ToDoList(int max_length_):max_length(max_length_){
+	~ToDoList(){
 		delete[] itens;
 		itens = nullptr;
 	}
-	Task get_task(int pos);
+
+	//metodos
+	Task* get_task(int pos);
 	void insert(Task t);
 	int get_length();
 };
 
 //metodos da ToDoList
 Task* ToDoList::get_task(int pos){
-	if(pos>=0 && pos>max_length){
-		return itens[pos];
+	if(pos>0 && pos<max_length){
+		return &itens[pos];
 	}
-
 	return nullptr;
-	
 }
 
 void ToDoList::insert(Task t){
@@ -88,33 +89,26 @@ void ToDoList::insert(Task t){
 	}
 }
 
-int get_length(){
+int ToDoList::get_length(){
 	return length;
 }
 
 
-
-
-
 //metodos globais
 void print(Task t){
-		std::cout << t.get_description() << "\n";
-		std::cout << t.get_datetime()<< "\n";
-		if(t.isDone()){
-			cout<<"Tarefa realizada\n";
-		}else{
-			cout<<"Tarefa nao realizada\n";
-		}
+	cout << t.get_description() << " - ";
+	cout << t.get_datetime() << " - ";
+	cout << (t.isDone()?"Feito":"Por fazer") << "\n";
 	}
 
 
 void print (ToDoList l){
-	for (int i=0; i<l.get_length(); i++){
+	for (int i=1; i<=l.get_length(); i++){
 		Task* task_ptr = l.get_task(i);
 		if(task_ptr != nullptr){
 			print(*task_ptr);
 		}else{
-			cout<<"Erro no print. Posição nao encontrada";
+			cout<<"Erro no print. Posição nao encontrada\n";
 		}
 
 	}
@@ -122,10 +116,19 @@ void print (ToDoList l){
 
 int main(){
 
-	ToDoList minhaLista{10};
+	Task t1{"Comer um x-caboquinho", 
+		   "20/03/2026 7:00"};
+	Task t2{"Ir para a academia", 
+		   "20/03/2026 9:00"};
+	Task t3{"Comer lasanha",
+		   "20/03/2026 12:00"};
 
-	Task t1{"Comer x salada", "18/03/20206 20:00"};
-	Task t2{"Nadar no mar da tristeza", "20/03/20206 07:00"};
+	ToDoList minha_todolist{10};
+
+	minha_todolist.insert(t1);
+	minha_todolist.insert(t2);
+	minha_todolist.insert(t3);
+	print(minha_todolist);
 
 
 
