@@ -14,6 +14,7 @@ public:
 		description(desc),
 		datetime(dt),
 		done(false){}
+
 	void markAsDone();
 	void markAsNotDone();
 	bool isDone(); //isDone() tambem é considerado um método get, porem com nome diferente rs
@@ -44,17 +45,18 @@ void Task::markAsNotDone(){
 		done = false;
 	}
 
-
-class ToDoList{
+template <typename T>
+class List{
 private: 
-	Task* itens;
+	T* itens;
 	int length = 0;
 	int max_length = 0;
+	bool valid_position(int pos) const;
 public:
 	//construtores
-	ToDoList()=default;
+	List()=default;
 
-	ToDoList(int max_length_):max_length(max_length_){
+	List(int max_length_):max_length(max_length_){
 		itens = new Task[max_length];
 		length=0;
 	}
