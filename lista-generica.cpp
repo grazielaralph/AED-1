@@ -133,9 +133,9 @@ void print(Task t){
 template <typename T>
 void print (const List<T>& l){
 	for (int i=1; i<=l.get_length(); i++){
-		Task* task_ptr = l.get_task(i);
-		if(task_ptr != nullptr){
-			print(*task_ptr);
+		T* item_ptr = l.get_item(i);
+		if(item_ptr != nullptr){
+			print(*item_ptr);
 		}else{
 			cout<<"Erro no print. Posição nao encontrada\n";
 		}
@@ -172,21 +172,21 @@ int main(){
 
 	std::cout << "\nRemovendo...\n";
 	int pos = 3;
-	if (todolist.del(pos)) {
-		std::cout << "Item removido com sucesso.\n";
+	if (minha_todolist.del(pos)) {
+		cout << "Item removido com sucesso.\n";
 	}	
 	else {
-		std::cout << "Remoção não efetuada.\n";
+		cout << "Remoção não efetuada.\n";
 	}
-	print(todolist);
+	print(minha_todolist);
 	pos = 1;
-	if (todolist.del(pos)) {
-		std::cout << "Item removido com sucesso.\n";
+	if (minha_todolist.del(pos)) {
+		cout << "Item removido com sucesso.\n";
 	}	
 	else {
-		std::cout << "Remoção não efetuada.\n";
+		cout << "Remoção não efetuada.\n";
 	}
-	print(todolist);
+	print(minha_todolist);
 
 
 
