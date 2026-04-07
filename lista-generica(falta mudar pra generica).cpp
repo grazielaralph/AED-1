@@ -86,7 +86,7 @@ T* List<T>::get_item(int pos) const{
 }
 
 template <typename T>
-void List::insert(T item){
+void List<T>::insert(T item){
 	if(length < max_length){
 		length++;
 		itens[length] = item;
@@ -100,6 +100,23 @@ int List<T>::get_length() const{
 	return length;
 }
 
+template <typename T>
+bool List<T>::empty(){
+	return length == 0;
+}
+
+template<typename T>
+bool List<T>::del(int pos){
+	if(!empty() && valid_position(pos)){
+		for(int i=pos; i<=length-1; i++){
+			itens[i] = itens[i+1];
+		}
+		length--;
+		return true;
+	}
+	return false;
+}
+
 
 //metodos globais
 void print(Task t){
@@ -109,7 +126,8 @@ void print(Task t){
 	}
 
 
-void print (ToDoList l){
+template <typename T>
+void print (const List<T>& l){
 	for (int i=1; i<=l.get_length(); i++){
 		Task* task_ptr = l.get_task(i);
 		if(task_ptr != nullptr){
