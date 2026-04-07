@@ -172,6 +172,7 @@ int main(){
 
 	std::cout << "\nRemovendo...\n";
 	int pos = 3;
+
 	if (minha_todolist.del(pos)) {
 		cout << "Item removido com sucesso.\n";
 	}	
@@ -186,6 +187,7 @@ int main(){
 	else {
 		cout << "Remoção não efetuada.\n";
 	}
+	t3.markAsDone(); //teste do bool
 	print(minha_todolist);
 
 
