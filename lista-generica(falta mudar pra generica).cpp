@@ -63,35 +63,40 @@ public:
 	
 
 	//destrutor pra matar minha listinha procrastinada
-	~ToDoList(){
+	~List(){
 		delete[] itens;
 		itens = nullptr;
 	}
 
 	//metodos
-	Task* get_task(int pos);
-	void insert(Task t);
-	int get_length();
+	T* get_item(int pos) const;
+	void insert(T item);
+	int get_length() const;
+	bool del(int pos);
+	bool empty();
 };
 
 //metodos da ToDoList
-Task* ToDoList::get_task(int pos){
-	if(pos>0 && pos<max_length){
+template <typename T>
+T* List<T>::get_item(int pos) const{
+	if(valid_position(pos)){
 		return &itens[pos];
 	}
 	return nullptr;
 }
 
-void ToDoList::insert(Task t){
+template <typename T>
+void List::insert(T item){
 	if(length < max_length){
 		length++;
-		itens[length] = t;
+		itens[length] = item;
 	}else{
 		cout << "Lista cheia\n";
 	}
 }
 
-int ToDoList::get_length(){
+template<typename T>
+int List<T>::get_length() const{
 	return length;
 }
 
