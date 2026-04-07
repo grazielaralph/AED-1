@@ -76,7 +76,11 @@ public:
 	bool empty();
 };
 
-//metodos da ToDoList
+template<typename T>
+bool List<T>::valid_position(int pos) const{
+	return pos>0 && pos<=length;
+}
+
 template <typename T>
 T* List<T>::get_item(int pos) const{
 	if(valid_position(pos)){
@@ -139,6 +143,17 @@ void print (const List<T>& l){
 	}
 }
 
+Task* search_task_by_desk(string desc, const List<Task>& list){
+	for(int i=1; i<list.get_length(); i++){ //percorre a lista
+		Task* prt_task = list.get_item(i); 
+		//pega o ponteiro da lista e verifica se bate com a descrição da pesquisa
+		if(desc == prt_task->get_description()){
+			return prt_task; //caso encontre a task desejada. Retorno o ponteiro
+		}
+	}
+	return nullptr;
+}
+
 int main(){
 
 	Task t1{"Comer um x-caboquinho", 
@@ -148,12 +163,30 @@ int main(){
 	Task t3{"Comer lasanha",
 		   "20/03/2026 12:00"};
 
-	ToDoList minha_todolist{10};
+	List<Task> minha_todolist{10}; //lista generica se tornando especifica para o tipo task
 
 	minha_todolist.insert(t1);
 	minha_todolist.insert(t2);
 	minha_todolist.insert(t3);
 	print(minha_todolist);
+
+	std::cout << "\nRemovendo...\n";
+	int pos = 3;
+	if (todolist.del(pos)) {
+		std::cout << "Item removido com sucesso.\n";
+	}	
+	else {
+		std::cout << "Remoção não efetuada.\n";
+	}
+	print(todolist);
+	pos = 1;
+	if (todolist.del(pos)) {
+		std::cout << "Item removido com sucesso.\n";
+	}	
+	else {
+		std::cout << "Remoção não efetuada.\n";
+	}
+	print(todolist);
 
 
 
