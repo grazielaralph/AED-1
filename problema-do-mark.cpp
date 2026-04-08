@@ -31,7 +31,7 @@ public:
 	void insert(T item);
 	int get_length() const;
 	bool del(int pos);
-	bool empty();
+	bool empty() const;
 };
 
 template<typename T>
