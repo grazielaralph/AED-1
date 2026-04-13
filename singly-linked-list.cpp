@@ -71,6 +71,7 @@ public:
 		length = 0;
 	}
 	void insert(Course c);
+	void print();
 
 };
 
@@ -82,8 +83,17 @@ void SinglyLinkedList::insert (Course c){
 	last->next = new Node{c, nullptr}; //pega o next do ultimo elemento e insere o nó do proximo elemento 
 	//a setinha significa que estamos acessando tal elemento via ponteiro
 	succ(last);
+	length++;
 }
 
+void SinglyLinkedList::print(){
+	Node* p = first->next;
+	while(p!=nullptr){
+		print(p->get_course());
+		succ(p);
+	}
+	cout<<"\n";
+}
 
 int main(){
 
@@ -98,6 +108,8 @@ int main(){
 	l.insert(c2);
 	l.insert(c3);
 	l.insert(c4);
+
+	l.print();
 
 
 	return 0;
