@@ -20,6 +20,7 @@ public:
 	string get_name() const;  
 	string get_code()const;
 	int get_courseLoad() const;
+	void print() const;
 };
 
 //metodos da classe
@@ -35,13 +36,21 @@ int Course::get_courseLoad() const {
 	return courseLoad;
 }
 
+//mostragem da materia 
+void Course::print() const{	
+	cout<< get_name()<<" - ";  
+	cout<< get_code()<<" - ";
+	cout<< get_courseLoad() << "\n";
+}
+
 //metodos gerais
-void print (const Course& c){
+/*void print (const Course& c){
 	cout<< c.get_name()<<" - ";  
 	cout<< c.get_code()<<" - ";
 	cout<< c.get_courseLoad() << "\n";
-}
+}*/
 
+//classe nó
 class Node{
 private:
 	Course course;
@@ -57,6 +66,7 @@ const Course& Node::get_course(){
 	return course;
 }
 
+//lista simplesmente encadeada
 class SinglyLinkedList{
 private:
 	Node* first = nullptr; //prim
@@ -75,10 +85,12 @@ public:
 
 };
 
+//metodo pra receber o nó do sucessor
 void SinglyLinkedList::succ(Node*& p){
 	p = p -> next;
 }
 
+//inserior novo item na lista
 void SinglyLinkedList::insert (Course c){
 	last->next = new Node{c, nullptr}; //pega o next do ultimo elemento e insere o nó do proximo elemento 
 	//a setinha significa que estamos acessando tal elemento via ponteiro
@@ -86,10 +98,11 @@ void SinglyLinkedList::insert (Course c){
 	length++;
 }
 
+//imprimir os elementos da lista
 void SinglyLinkedList::print(){
 	Node* p = first->next;
 	while(p!=nullptr){
-		print(p->get_course());
+		p->get_course().print();
 		succ(p);
 	}
 	cout<<"\n";
