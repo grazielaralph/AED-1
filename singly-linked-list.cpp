@@ -200,6 +200,7 @@ int main(){
 	}
 
 	cout<<"Testando remocao\n";
+	
 	Course cc{"Matematica Discreta", "", 0};
 
 	if(l.del(cc)){
