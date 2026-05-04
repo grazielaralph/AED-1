@@ -85,7 +85,7 @@ private:
 	void succ(Node<T>*& p);
 public:
 	SinglyLinkedList(){
-		first = new Node{}; 
+		first = new Node<T>{}; 
 		first -> next = nullptr;//nao precisa inicializar com o next nulo porque ja é feito no construtor padrão do node 
 		last = first;
 		length = 0;
@@ -113,7 +113,8 @@ void SinglyLinkedList<T>::insert (T item){
 
 template<typename T>
 ListNavigator<T> SinglyLinkedList<T>::get_ListNavigator() const{
-	return ListNavigator<T>{first->next}; //nao entendi o first->next aaaaa
+	return ListNavigator<T>{first->next}; //cria o ponteiro navigator e ja retorna diretamente. 
+	//logo nao é necessario alocar um espaco da memoria task neste momento
 }
 
 template<typename T>
@@ -121,6 +122,65 @@ bool SinglyLinkedList<T>::empty(){
 	//a lista estará vazia se o endereço do nó apontar pra ele mesmo
 	return length==0;
 }
+
+//classe do Navigator
+template<typename T>
+class ListNavigator{
+private:
+	Node<T>* current; //ponteiro que irá apontar pro item da vez
+public:
+	ListNavigator(Node<T>* start): current(start){}
+	bool end();//verifica se está no final da fila
+	bool next();
+	bool getCurrentItem(T&); //pega o item corrente
+};
+
+template<typename T>
+bool ListNavigator<T>::end(){
+	return current == nullptr;
+}
+
+template <typename T>
+bool ListNavigator<T>::next(){
+	current = current->next; //o ponteiro do navigator recebe o endereço do proximo nó
+}
+
+template <typename T>
+bool ListNavigator<T>::getCurrentItem(T& item){
+	if(current == nullptr){
+		return false;
+	}
+	item = current->get_item(); //pega o item cujo endereço está armazenado no ponteiro "navegante"
+	return true;
+}
+
+
+//print se torna uma função e deixa de ser um metodo. 
+//Para cada lista, seria necessario criar uma função diferente?
+template <typename T>
+void print(const SinglyLinkedList<T>& list){
+	ListNavigator<T> nav = list.get_ListNavigator();
+	Course course;
+	while(!nav.end()){
+		nav.getCurrentItem(course);
+		course.print();
+		nav.next();
+	}
+}
+
+//pesquisa pelo codigo do curso 
+optional<Course> search_by_code(const string course_code, const SinglyLinkedList<Course>& list){
+	ListNavigator<Course> nav = list.get_ListNavigator();
+	Course course; //cria um objeto do tipo curso pra comparar um elemento por vez
+	while(!nav.end()){
+		if(course_code == course.get_code()){
+			return course;
+		}
+		nav.next();
+	}
+	return nullopt; //falha da busca
+}
+
 
 int main(){
 
