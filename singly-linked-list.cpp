@@ -113,70 +113,11 @@ void SinglyLinkedList<T>::insert (T item){
 
 template<typename T>
 ListNavigator<T> SinglyLinkedList<T>::get_ListNavigator() const{
-	return ListNavigator<T>{first->next};
+	return ListNavigator<T>{first->next}; //nao entendi o first->next aaaaa
 }
 
-//imprimir os elementos da lista
-void SinglyLinkedList::print(){
-	Node* p = first->next;
-	while(p!=nullptr){
-		p->get_course().print();
-		succ(p);
-	}
-	cout<<"\n";
-}
-
-Node* SinglyLinkedList::search(string name){
-	Node* p = first -> next;
-	//p->get_course() pega o curso que está no endereço recebido pelo p. A partir disso, descobrimos o nome do curso neste nó
-	while(p != nullptr && p->get_course().get_name()!=name){
-		succ(p);
-	}
-	return p;
-}
-bool SinglyLinkedList::search(Course& c){
-	string k = c.get_name(); //chave pra encontrar o nó
-	Node* p = search(k); //procuro o nó na lista a partir da chave que eu peguei e recebo o ponteiro desse nó (ou nulo caso nao encontre)
-	if(p!=nullptr){ //depois verifico se o ponteiro retornado é nulo ou nao
-		c = p->get_course();
-		return true;
-	}
-	return false;
-}
-
-Node* SinglyLinkedList::predecessor(Node* r){
-	Node* p = first->next;
-	//enquanto o p for diferente do r, a gente percorre a lista porque o endereço do nó é sempre do próximo
-	while(p!=nullptr && p->next != r){
-		succ(p);
-	}
-	return p;
-}
-
-bool SinglyLinkedList::del(Node* r){
-	if(empty() || r==nullptr){
-		return false;
-	}
-	Node* p = predecessor(r);
-	if(p==nullptr){return false;}
-	p->next = r->next;
-	if(p->next == nullptr){
-		last = p;
-	}
-	delete r;
-	return true;
-}
-
-bool SinglyLinkedList::del(Course& c){
-	Node* r = search(c.get_name());
-	if(del(r)){
-		length--;
-		return true;
-	}
-	return false;
-}
-
-bool SinglyLinkedList::empty(){
+template<typename T>
+bool SinglyLinkedList<T>::empty(){
 	//a lista estará vazia se o endereço do nó apontar pra ele mesmo
 	return length==0;
 }
