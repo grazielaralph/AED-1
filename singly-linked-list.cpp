@@ -21,7 +21,6 @@ public:
 	string get_code()const;
 	int get_courseLoad() const;
 	void print() const;
-
 };
 
 //metodos da classe
@@ -74,9 +73,10 @@ const Course& Node::get_course(){
 class SinglyLinkedList{
 private:
 	Node* first = nullptr; //prim
-	Node* last = nullptr;
-	int length; //ult
+	Node* last = nullptr; //ult
+	int length=0; 
 	void succ(Node*& p);
+	
 	Node* search(string name); //busca por chave
 	bool del(Node* p);
 	Node* predecessor(Node* r);
@@ -89,6 +89,7 @@ public:
 	}
 	void insert(Course c);
 	void print();
+	
 	bool search(Course& c);
 	bool del(Course& c);
 	bool empty();
