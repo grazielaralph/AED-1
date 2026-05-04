@@ -54,32 +54,35 @@ void Course::print() const{
 
 
 //classe nó
+template<typename T>
 class Node{
 private:
-	Course course;
+	T item;
 public:
-	Node* next;
-	Node(): next(nullptr){}
-	Node(Course course, Node* next): course(course), next(next){}
-	const Course& get_course();
+	Node<T>* next; //ponteiro pro proximo elemento da lista
+	Node(): next(nullptr){} //construtor padrão
+	Node(T item): item(item), next(nullptr){} //construtor instanciando o item e o ponteiro
+	T& get_item();
 
 };
 
-const Course& Node::get_course(){
-	return course;
+template <typename T>
+T& Node<T>::get_item(){
+	return item;
 }
 
+template<typename T>
+class ListNavigator;
+
+
 //lista simplesmente encadeada
+template<typename T>
 class SinglyLinkedList{
 private:
-	Node* first = nullptr; //prim
-	Node* last = nullptr; //ult
+	Node<T>* first = nullptr; //prim
+	Node<T>* last = nullptr; //ult
 	int length=0; 
-	void succ(Node*& p);
-	
-	Node* search(string name); //busca por chave
-	bool del(Node* p);
-	Node* predecessor(Node* r);
+	void succ(Node<T>*& p);
 public:
 	SinglyLinkedList(){
 		first = new Node{}; 
@@ -87,25 +90,30 @@ public:
 		last = first;
 		length = 0;
 	}
-	void insert(Course c);
-	void print();
-	
-	bool search(Course& c);
-	bool del(Course& c);
 	bool empty();
+	bool valid_pos(int pos) const;
+	void insert(T item);
+	ListNavigator<T> get_ListNavigator() const;
 };
 
 //metodo pra receber o nó do sucessor
-void SinglyLinkedList::succ(Node*& p){
+template<typename T>
+void SinglyLinkedList<T>::succ(Node<T>*& p){
 	p = p -> next;
 }
 
 //inserior novo item na lista
-void SinglyLinkedList::insert (Course c){
-	last->next = new Node{c, nullptr}; //pega o next do ultimo elemento e insere o nó do proximo elemento 
+template<typename T>
+void SinglyLinkedList<T>::insert (T item){
+	last->next = new Node{item}; //pega o next do ultimo elemento e insere o nó do proximo elemento 
 	//a setinha significa que estamos acessando tal elemento via ponteiro
 	succ(last);
 	length++;
+}
+
+template<typename T>
+ListNavigator<T> SinglyLinkedList<T>::get_ListNavigator() const{
+	return ListNavigator<T>{first->next};
 }
 
 //imprimir os elementos da lista
