@@ -17,9 +17,7 @@ public:
 template<typename T>
 T& Node<T>::get_item() { return item; }
 
-
 //------------------------------------------------------------------------------------------
-
 template<typename T>
 class ListNavigator{
 private:
@@ -63,9 +61,7 @@ bool ListNavigator<T>::getCurrentItem(T& item){
 }
 
 //-----------------------------------------------------------------------------------------------------------
-
 template <typename T>
-//precisa de construtor e destrutor
 class Deque{
 private:
 	Node<T>* pFrontSent;
@@ -76,13 +72,23 @@ private:
 	void succ(Node<T>*& p);
 	void prev(Node<T>*& p);
 public:
+	//construtores
+	Deque(){}
 	Deque(){
+		//é isso mesmo?
 		front = new Node<T>{};
-		front -> next;
+		pFrontSent -> front;
 		back = new Node<T>{};
-		back -> prev;
-
+		pBackSent -> back;
+		length=0;
 	}
+
+	//destrutor
+	~Deque(){
+		//nao entendi o que é pra colocar kkk
+	}
+
+	//metodos da classe
 	void insertFront(T item);
 	void insertBack(T item);
 	void removeFront();
@@ -94,6 +100,23 @@ public:
 	bool empty();
 };
 
+template <typename T>
+void Deque<T>::succ(Node<T>*& p){
+	p=p->next;
+}
+
+template <typename T>
+void Deque<T>::prev(Node<T>*& p){
+	p=p->prev;
+}
+
+template <typename T>
+void Deque<T>::insertFront(T item){
+
+}
+
+
+//------------------------------------------------------------------------------------------------------
 int main(){
 	return 0;
 }
