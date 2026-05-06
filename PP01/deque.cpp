@@ -64,8 +64,6 @@ bool ListNavigator<T>::getCurrentItem(T& item){
 template <typename T>
 class Deque{
 private:
-	Node<T>* pFrontSent;
-	Node<T>* pBackSent;
 	Node<T>* front;
 	Node<T>* back;
 	int length;
@@ -77,15 +75,24 @@ public:
 	Deque(){
 		//é isso mesmo?
 		front = new Node<T>{};
-		pFrontSent -> front;
 		back = new Node<T>{};
-		pBackSent -> back;
+		front->next=back;
+		back->prev=front;
 		length=0;
 	}
 
 	//destrutor
 	~Deque(){
-		//nao entendi o que é pra colocar kkk
+		if(length!=0){
+			Node<T> p = front->next;
+			while(p!=back){
+				delete p; //apaga o nó que p recebeu, no caso nó corrente
+				succ(p);
+			}
+		}
+		//mesmo que o deque esteja vazio, é necessario 
+		delete front;
+		delete back;
 	}
 
 	//metodos da classe
