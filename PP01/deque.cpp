@@ -33,12 +33,12 @@ public:
 
 template <typename T>
 bool ListNavigator<T>::begin(){
-	//como eu façoooo o begin
+	return current->prev == nullptr;
 }
 
 template<typename T>
 bool ListNavigator<T>::end(){
-	return current == nullptr;
+	return current->next == nullptr;
 }
 
 template <typename T>
@@ -73,7 +73,6 @@ public:
 	//construtores
 	Deque(){}
 	Deque(){
-		//é isso mesmo?
 		front = new Node<T>{};
 		back = new Node<T>{};
 		front->next=back;
@@ -119,8 +118,23 @@ void Deque<T>::prev(Node<T>*& p){
 
 template <typename T>
 void Deque<T>::insertFront(T item){
+	T* pNew = &item;
+	pNew->next=front->next;
+	pNew->next->prev=pNew;
+	front->next=pNew;
+	pNew->prev = front;
+}
+
+template <typename T>
+void Deque<T>::insertBack(T item){
 
 }
+
+template <typename T>
+void Deque<T>::removeFront(){}
+
+template <typename T>
+void Deque<T>::removeBack(){}
 
 
 //------------------------------------------------------------------------------------------------------
