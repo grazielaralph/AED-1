@@ -117,9 +117,9 @@ void Deque<T>::prev(Node<T>*& p){
 template <typename T>
 void Deque<T>::insertFront(T item){
 	Node<T>* pNew = new Node<T>(item);
-	pNew->next=front->next;
-	pNew->next->prev=pNew;
-	front->next=pNew;
+	pNew->next = front->next;
+	pNew->next->prev = pNew;
+	front->next = pNew;
 	pNew->prev = front;
 	length++;
 }
@@ -187,7 +187,7 @@ int size(){
 
 template <typename T>
 bool empty(){
-	if(length==0){
+	if(length == 0){
 		return true;
 	}
 	return false;
@@ -196,7 +196,7 @@ bool empty(){
 template <typename T>
 class Queue{
 private: 
-    int length=0;
+    int length = 0;
     Deque<T> deque;
 public:
 	Queue(){
@@ -204,9 +204,9 @@ public:
 		back = new Node<T>{};
 		front->next = nullptr;
 		back = front;
-		length=0;
+		length = 0;
 	}
-	~Queue(){}
+	~Queue(){} //aciona o destrutor do deque para destruir a fila
 	void enqueue(T item);
 	void dequeue();
 	const T& front();
@@ -215,9 +215,11 @@ public:
 	QueueNavigator getStackNavigator();
     };
 
+
+
     template <typename T>
     bool Queue::empty(){
-    	if(length==0){
+    	if(length == 0){
     		return true;
     	}
     	return false;
