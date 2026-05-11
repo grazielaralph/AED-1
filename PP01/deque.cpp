@@ -99,7 +99,7 @@ public:
 	void removeBack();
 	T front();
 	T back();
-	DequeNavigator<T> const dequeNavigator();
+	ListNavigator<T> const dequeNavigator();
 	int size();
 	bool empty();
 };
@@ -155,14 +155,43 @@ void Deque<T>::removeBack(){
 }
 
 template <typename T>
-T Deque<T>::front(){
-
+const T* Deque<T>::front() const{
+	if(empty()){
+		cout<<"Deque vazio!";
+		return nullptr;
+	}else{
+		return &front->next->get_item();	
+	}
 }
 
 
 template <typename T>
-T Deque<T>::back(){}
+const T* Deque<T>::back() const{
+	if(empty()){
+		cout<<"Deque vazio!";
+		return nullptr;
+	}else{
+		return &back->prev->get_item();
+	}
+}
 
+template <typename T>
+ListNavigator<T> const Deque<T>::dequeNavigator(){
+	return ListNavigator<T>{front->next};
+}
+
+template <typename T>
+int size(){
+	return length;
+}
+
+template <typename T>
+bool empty(){
+	if(lenth==0){
+		return true;
+	}
+	return false;
+}
 
 
 //------------------------------------------------------------------------------------------------------
