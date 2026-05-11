@@ -210,88 +210,90 @@ public:
 	ListNavigator getQueueNavigator();
     };
 
-    template <typename T>
-    void Queue<T>::enqueue(T item){
-    	dequeQueue.insertBack(item);
-    }
+template <typename T>
+void Queue<T>::enqueue(T item){
+   	dequeQueue.insertBack(item);
+   }
 
-    template <typename T>
-    void Queue<T>::dequeue(){
-    	dequeQueue.removeFront();
-    }
+template <typename    
+void Queue<T>::dequeue(){
+   	dequeQueue.removeFront();
+   }
 
-    template <typename T>
-    const T& Queue<T>::front(){
-    	return dequeQueue.front();
-    }
+template <typename T>
+const T& Queue<T>::front(){
+   	return dequeQueue.front();
+   }
 
-    template <typename T>
-    bool Queue<T>::empty(){
-    	if(length == 0){
-    		return true;
-    	}
-    	return false;
-    }
+template <typename T>   
+bool Queue<T>::empty(){
+   	if(length == 0){
+   		return true;
+   	}
+   	return false;
+   }
 
-    template <typename T>
-    int Queue<T>::size(){
-    	return length;
-    }
+template <typename T>
+int Queue<T>::size(){
+   	return length;
+   }
 
-    template <typename T>
-    ListNavigator Queue<T>::getQueueNavigator(){
-    	return dequeQueue.getDequeNavigator();
-    }
+template <typename T>
+ListNavigator Queue<T>::getQueueNavigator(){
+   	return dequeQueue.getDequeNavigator();
+   }
+
 //-----------------------------------------------------------------------------------------------------------
-    template <typename T>
-    class Stack{
-    private:
-    	int length;
-    	Deque<T> dequeStack;
-    public:
-    	Stack():length(0){}
-    	void push(T item);
-    	void pop();
-    	const T& top();
-    	bool empty();
-    	int size();
-    	ListNavigator getStackNavigator();
-    }
+   
+template <typename T>
+class Stack{
+private:
+   	int length;
+   	Deque<T> dequeStack;
+public:
+   	Stack():length(0){}
+   	void push(T item);
+   	void pop();
+   	const T& top();
+   	bool empty();
+   	int size();
+   	ListNavigator getStackNavigator();
+   }
 
-    template <typename T>
-    void Stack<T>::push(T item){
-    	dequeStack.insertFront(item);
-    }
+template <typename T>
+void Stack<T>::push(T item){
+   	dequeStack.insertFront(item);
+   }
+   
+template <typename T>
+void Stack<T>::pop(){
+   	dequeStack.removeFront();
+   }
 
-    template <typename T>
-    void Stack<T>::pop(){
-    	dequeStack.removeFront();
-    }
+template <typename T>
+const T& Stack<T>::top(){
+   	return dequeStack.front();
+   }
 
-    template <typename T>
-    const T& Stack<T>::top(){
-    	return dequeStack.front();
-    }
+template <typename T>
+bool Stack<T>::empty(){
+   	if(length == 0){
+   		return true;
+   	}
+   	return false;
+   }
 
-    template <typename T>
-    bool Stack<T>::empty(){
-    	if(length == 0){
-    		return true;
-    	}
-    	return false;
-    }
+template <typename T>
+int Stack<T>::size(){
+   	return length;
+   }
 
-    template <typename T>
-    int Stack<T>::size(){
-    	return length;
-    }
-
-    template <typename T>
-    ListNavigator Stack<T>::getQueueNavigator(){
-    	return dequeStack.getDequeNavigator();
-    }
+template <typename T>
+ListNavigator Stack<T>::getQueueNavigator(){
+   	return dequeStack.getDequeNavigator();
+   }
 //------------------------------------------------------------------------------------------------------
-    
+
 
 //------------------------------------------------------------------------------------------------------
 int main(){
