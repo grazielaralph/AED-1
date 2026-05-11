@@ -1,7 +1,6 @@
 #include <iostream>
 using namespace std;
 
-
 template<typename T>
 class Node {
 private:
@@ -71,7 +70,6 @@ private:
 	void prev(Node<T>*& p);
 public:
 	//construtores
-	Deque(){}
 	Deque(){
 		front = new Node<T>{};
 		back = new Node<T>{};
@@ -83,7 +81,7 @@ public:
 	//destrutor
 	~Deque(){
 		if(length!=0){
-			Node<T> p = front->next;
+			Node<T>* p = front->next;
 			while(p!=back){
 				delete p; //apaga o nó que p recebeu, no caso nó corrente
 				succ(p);
@@ -118,23 +116,53 @@ void Deque<T>::prev(Node<T>*& p){
 
 template <typename T>
 void Deque<T>::insertFront(T item){
-	T* pNew = &item;
+	Node<T>* pNew = new Node<T>(item);
 	pNew->next=front->next;
 	pNew->next->prev=pNew;
 	front->next=pNew;
 	pNew->prev = front;
+	length++;
 }
 
 template <typename T>
 void Deque<T>::insertBack(T item){
-
+	Node<T>* pNew = new Node<T>(item);
+	pNew->prev = back->prev; //prev.pNew recebe prev.back
+	pNew->prev->next = pNew; //acesso o ultimo item da fila e falo pro next dele apontar pro nó novo
+	back->prev = pNew; //prev.back recebe o endereço do novo item
+	pNew->next=back; //next.pNew recebe o endereço do back
+	length++;
 }
 
 template <typename T>
-void Deque<T>::removeFront(){}
+void Deque<T>::removeFront(){
+	if(empty()) return; //para nao deletar sentinela sem querer
+	Node<T>* p = front->next;
+	front->next = p->next;
+	p->next->prev = front; //prev.nó sucessor recebe o front
+	delete p;
+	length--;
+}
 
 template <typename T>
-void Deque<T>::removeBack(){}
+void Deque<T>::removeBack(){
+	if(empty()) return;
+	Node<T>* p = back->prev;
+	back->prev = p->prev;
+	p->prev->next = back;
+	delete p;
+	length--;
+}
+
+template <typename T>
+T Deque<T>::front(){
+
+}
+
+
+template <typename T>
+T Deque<T>::back(){}
+
 
 
 //------------------------------------------------------------------------------------------------------
