@@ -187,12 +187,46 @@ int size(){
 
 template <typename T>
 bool empty(){
-	if(lenth==0){
+	if(length==0){
 		return true;
 	}
 	return false;
 }
 
+template <typename T>
+class Queue{
+private: 
+    int length=0;
+    Deque<T> deque;
+public:
+	Queue(){
+		front = new Node<T>{};
+		back = new Node<T>{};
+		front->next = nullptr;
+		back = front;
+		length=0;
+	}
+	~Queue(){}
+	void enqueue(T item);
+	void dequeue();
+	const T& front();
+	bool empty();
+	int size();
+	QueueNavigator getStackNavigator();
+    };
+
+    template <typename T>
+    bool Queue::empty(){
+    	if(length==0){
+    		return true;
+    	}
+    	return false;
+    }
+
+    template <typename T>
+    int Queue::size(){
+    	return length;
+    }
 
 //------------------------------------------------------------------------------------------------------
 int main(){
