@@ -293,9 +293,55 @@ ListNavigator Stack<T>::getQueueNavigator(){
    	return dequeStack.getDequeNavigator();
    }
 //------------------------------------------------------------------------------------------------------
+/*Biggy: 4 filas 
+Biggy-comandos: é a entrada de comandos
+FEP: embarque dos pacotes que serão entregues
+Cancel: pacotes com entrega cancelada
+DESC: pacotes com avaria que serão descartados*/
 
+class Comando{
+private:
+	string status;
+	int cod;
+public:
+	Comando(string status, int cod):
+	status(status),cod(cod){}
+	string getStatus() const;
+	int getCod() const;
+	void print() const;
+}
+
+string Comando::getStatus() const {
+	return status;
+}
+
+int Comando::getCod() const {
+	return cod;
+}
+
+void Comando::print() const{
+	cout << "(" << getStatus() << ", " << getCod() << ")";
+}
 
 //------------------------------------------------------------------------------------------------------
 int main(){
+
+	string status="";
+	int cod=0;
+
+	Queue<Comando> biggyComandos{};
+	Queue<Comando> FEP{};
+	Queue<Comando> cancel{};
+	Queue<Comando> DESC{};
+
+	while(status!="-"){
+		cin >> status;
+		cin >> cod;
+		Comando c{status, cod};
+		biggyComandos.enqueue(c);
+	}
+
+
+
 	return 0;
 }
