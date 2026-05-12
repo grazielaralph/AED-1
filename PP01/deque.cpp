@@ -298,6 +298,7 @@ private:
 	string status;
 	int cod;
 public:
+	Comando() = default;
 	Comando(string status, int cod):
 	status(status),cod(cod){}
 	string getStatus() const;
@@ -318,6 +319,17 @@ void Comando::print() const{
 }
 
 //------------------------------------------------------------------------------------------------------
+
+void biggyOrganiza(Queue<Comando>& biggyComandos){
+	ListNavigator<Comando> queueNav = biggyComandos.getQueueNavigator();
+	Comando comand;
+	while(queueNav.end()){
+		
+	}
+
+}
+
+//------------------------------------------------------------------------------------------------------
 int main(){
 
 	string status="";
@@ -328,12 +340,19 @@ int main(){
 	Queue<Comando> cancel{};
 	Queue<Comando> DESC{};
 
+
+	//Biggy recebe a lista de comandos
 	while(status!="-"){
 		cin >> status;
 		cin >> cod;
 		Comando c{status, cod};
 		biggyComandos.enqueue(c);
 	}
+
+	//Biggy inicia a conferencia dos comandos
+
+
+
 
 
 
