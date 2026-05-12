@@ -25,8 +25,8 @@ public:
 	ListNavigator(Node<T>* start): current(start){}
 	bool begin();
 	bool end();//verifica se está no final da fila
-	bool next();
-	bool prev();
+	void next();
+	void prev();
 	bool getCurrentItem(T&); //pega o item corrente
 };
 
@@ -41,12 +41,12 @@ bool ListNavigator<T>::end(){
 }
 
 template <typename T>
-bool ListNavigator<T>::next(){
+void ListNavigator<T>::next(){
 	current = current->next; //o ponteiro do navigator recebe o endereço do proximo nó
 }
 
 template <typename T>
-bool ListNavigator<T>::prev(){
+void ListNavigator<T>::prev(){
 	current = current->prev; //o ponteiro do navigator recebe o endereço do nó anterior
 }
 
@@ -97,8 +97,8 @@ public:
 	void insertBack(T item);
 	void removeFront();
 	void removeBack();
-	T front();
-	T back();
+	const T* front() const;
+	const T* back() const;
 	ListNavigator<T> const getDequeNavigator();
 	int size();
 	bool empty();
@@ -207,7 +207,7 @@ public:
 	const T& front();
 	bool empty();
 	int size();
-	ListNavigator getQueueNavigator();
+	ListNavigator<T> getQueueNavigator();
     };
 
 template <typename T>
@@ -215,7 +215,7 @@ void Queue<T>::enqueue(T item){
    	dequeQueue.insertBack(item);
    }
 
-template <typename    
+template <typename T>
 void Queue<T>::dequeue(){
    	dequeQueue.removeFront();
    }
@@ -227,19 +227,16 @@ const T& Queue<T>::front(){
 
 template <typename T>   
 bool Queue<T>::empty(){
-   	if(length == 0){
-   		return true;
-   	}
-   	return false;
+   	return dequeQueue.empty();
    }
 
 template <typename T>
 int Queue<T>::size(){
-   	return length;
+   	return dequeQueue.size();
    }
 
 template <typename T>
-ListNavigator Queue<T>::getQueueNavigator(){
+ListNavigator<T> Queue<T>::getQueueNavigator(){
    	return dequeQueue.getDequeNavigator();
    }
 
@@ -257,8 +254,8 @@ public:
    	const T& top();
    	bool empty();
    	int size();
-   	ListNavigator getStackNavigator();
-   }
+   	ListNavigator<T> getStackNavigator();
+   };
 
 template <typename T>
 void Stack<T>::push(T item){
@@ -277,19 +274,16 @@ const T& Stack<T>::top(){
 
 template <typename T>
 bool Stack<T>::empty(){
-   	if(length == 0){
-   		return true;
-   	}
-   	return false;
+   	return dequeStack.empty();
    }
 
 template <typename T>
 int Stack<T>::size(){
-   	return length;
+   	return dequeStack.size();
    }
 
 template <typename T>
-ListNavigator Stack<T>::getQueueNavigator(){
+ListNavigator<T> Stack<T>::getStackNavigator(){
    	return dequeStack.getDequeNavigator();
    }
 //------------------------------------------------------------------------------------------------------
@@ -309,7 +303,7 @@ public:
 	string getStatus() const;
 	int getCod() const;
 	void print() const;
-}
+};
 
 string Comando::getStatus() const {
 	return status;

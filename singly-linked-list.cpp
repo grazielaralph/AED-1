@@ -178,7 +178,7 @@ optional<Course> search_by_code(const string course_code, const SinglyLinkedList
 		}
 		nav.next();
 	}
-	return nullopt; //falha da busca
+	return nullptr; //falha da busca
 }
 
 
