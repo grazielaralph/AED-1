@@ -17,6 +17,7 @@ template<typename T>
 T& Node<T>::get_item() { return item; }
 
 //------------------------------------------------------------------------------------------
+
 template<typename T>
 class ListNavigator{
 private:
@@ -60,6 +61,7 @@ bool ListNavigator<T>::getCurrentItem(T& item){
 }
 
 //-----------------------------------------------------------------------------------------------------------
+
 template <typename T>
 class Deque{
 private:
@@ -194,6 +196,7 @@ bool Deque<T>::empty(){
 }
 
 //-----------------------------------------------------------------------------------------------------------
+
 template <typename T>
 class Queue{
 private: 
@@ -286,27 +289,23 @@ template <typename T>
 ListNavigator<T> Stack<T>::getStackNavigator(){
    	return dequeStack.getDequeNavigator();
    }
+
 //------------------------------------------------------------------------------------------------------
-/*Biggy: 4 filas 
-Biggy-comandos: é a entrada de comandos
-FEP: embarque dos pacotes que serão entregues
-Cancel: pacotes com entrega cancelada
-DESC: pacotes com avaria que serão descartados*/
 
 class Comando{
 private:
-	string status;
+	char status;
 	int cod;
 public:
 	Comando() = default;
-	Comando(string status, int cod):
+	Comando(char status, int cod):
 	status(status),cod(cod){}
-	string getStatus() const;
+	char getStatus() const;
 	int getCod() const;
-	void print() const;
+	void printFEP() const;
 };
 
-string Comando::getStatus() const {
+char Comando::getStatus() const {
 	return status;
 }
 
@@ -320,29 +319,74 @@ void Comando::print() const{
 
 //------------------------------------------------------------------------------------------------------
 
-void biggyOrganiza(Queue<Comando>& biggyComandos){
+bool biggySearchFEP(Queue<Comando>& FEP, int codSearch){
+	ListNavigator<Comando> fepNav = FEP.getQueueNavigator();
+	Comando comand;
+
+	while(true){
+		fepNav.getCurrentItem(comand);
+		if(comand.getCod() == codSearch){
+			return true;
+		}
+		if(fepNav.end()){
+			break;
+		}
+		fepNav.next();
+	}
+	return false;
+}
+
+void biggyOrganize(Queue<Comando>& biggyComandos, Queue<Comando>& FEP, Queue<int>& cancel, Queue<int>& DESC){
 	ListNavigator<Comando> queueNav = biggyComandos.getQueueNavigator();
 	Comando comand;
 	while(queueNav.end()){
-		
-	}
+		queueNav.getCurrentItem(comand);
 
+		switch(comand.getStatus()){
+		case 'E':
+			FEP.enqueue(comand);
+			queueNav.next();
+			break;
+		case 'C':
+			//precisa verificar se ja ta na FEP
+			if(biggySearchFEP(FEP, comand.getCod())){
+				FEP.enqueue(comand);
+				queueNav.next();
+			}else{
+				cancel.enqueue(comand.getCod());
+				queueNav.next();
+			}
+			break;
+		case 'A':
+			//precisa verificar se ja ta na FEP
+			if(biggySearchFEP(FEP, comand.getCod())){
+				FEP.enqueue(comand);
+				queueNav.next();
+			}else{
+				DESC.enqueue(comand.getCod());
+				queueNav.next();
+			}
+			break;
+		}
+	}
 }
+
+
 
 //------------------------------------------------------------------------------------------------------
 int main(){
 
-	string status="";
+	char status=' ';
 	int cod=0;
 
 	Queue<Comando> biggyComandos{};
 	Queue<Comando> FEP{};
-	Queue<Comando> cancel{};
-	Queue<Comando> DESC{};
+	Queue<int> cancel{};
+	Queue<int> DESC{};
 
 
 	//Biggy recebe a lista de comandos
-	while(status!="-"){
+	while(status!='-'){
 		cin >> status;
 		cin >> cod;
 		Comando c{status, cod};
@@ -350,10 +394,7 @@ int main(){
 	}
 
 	//Biggy inicia a conferencia dos comandos
-
-
-
-
+	biggyOrganize(biggyComandos, FEP, cancel, DESC);
 
 
 	return 0;
