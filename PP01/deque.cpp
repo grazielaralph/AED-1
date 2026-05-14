@@ -302,7 +302,7 @@ public:
 	status(status),cod(cod){}
 	char getStatus() const;
 	int getCod() const;
-	void printFEP() const;
+	void print() const;
 };
 
 char Comando::getStatus() const {
