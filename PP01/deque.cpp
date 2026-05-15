@@ -38,7 +38,7 @@ bool ListNavigator<T>::begin(){
 
 template<typename T>
 bool ListNavigator<T>::end(){
-	return current->next == nullptr;
+	return current->next->next == nullptr;
 }
 
 template <typename T>
@@ -65,33 +65,34 @@ bool ListNavigator<T>::getCurrentItem(T& item){
 template <typename T>
 class Deque{
 private:
-	Node<T>* front;
-	Node<T>* back;
+	Node<T>* pFrontSent;
+	Node<T>* pBackSent;
 	int length;
 	void succ(Node<T>*& p);
 	void prev(Node<T>*& p);
 public:
 	//construtores
 	Deque(){
-		front = new Node<T>{};
-		back = new Node<T>{};
-		front->next=back;
-		back->prev=front;
+		pFrontSent = new Node<T>{};
+		pBackSent = new Node<T>{};
+		pFrontSent->next=pBackSent;
+		pBackSent->prev=pFrontSent;
 		length=0;
 	}
 
 	//destrutor
 	~Deque(){
 		if(length!=0){
-			Node<T>* p = front->next;
-			while(p!=back){
+			Node<T>* p = pFrontSent->next;
+			while(p != pBackSent){
+				Node<T>* next = p->next;
 				delete p; //apaga o nó que p recebeu, no caso nó corrente
-				succ(p);
+				p = next;
 			}
 		}
 		//mesmo que o deque esteja vazio, é necessario 
-		delete front;
-		delete back;
+		delete pFrontSent;
+		delete pBackSent;
 	}
 
 	//metodos da classe
@@ -103,7 +104,7 @@ public:
 	const T* back() const;
 	ListNavigator<T> const getDequeNavigator();
 	int size();
-	bool empty();
+	bool empty() const;
 };
 
 template <typename T>
@@ -119,29 +120,29 @@ void Deque<T>::prev(Node<T>*& p){
 template <typename T>
 void Deque<T>::insertFront(T item){
 	Node<T>* pNew = new Node<T>(item);
-	pNew->next = front->next;
+	pNew->next = pFrontSent->next;
 	pNew->next->prev = pNew;
-	front->next = pNew;
-	pNew->prev = front;
+	pFrontSent->next = pNew;
+	pNew->prev = pFrontSent;
 	length++;
 }
 
 template <typename T>
 void Deque<T>::insertBack(T item){
 	Node<T>* pNew = new Node<T>(item);
-	pNew->prev = back->prev; //prev.pNew recebe prev.back
+	pNew->prev = pBackSent->prev; //prev.pNew recebe prev.back
 	pNew->prev->next = pNew; //acesso o ultimo item da fila e falo pro next dele apontar pro nó novo
-	back->prev = pNew; //prev.back recebe o endereço do novo item
-	pNew->next=back; //next.pNew recebe o endereço do back
+	pBackSent->prev = pNew; //prev.back recebe o endereço do novo item
+	pNew->next=pBackSent; //next.pNew recebe o endereço do back
 	length++;
 }
 
 template <typename T>
 void Deque<T>::removeFront(){
 	if(empty()) return; //para nao deletar sentinela sem querer
-	Node<T>* p = front->next;
-	front->next = p->next;
-	p->next->prev = front; //prev.nó sucessor recebe o front
+	Node<T>* p = pFrontSent->next;
+	pFrontSent->next = p->next;
+	p->next->prev = pFrontSent; //prev.nó sucessor recebe o front
 	delete p;
 	length--;
 }
@@ -149,9 +150,9 @@ void Deque<T>::removeFront(){
 template <typename T>
 void Deque<T>::removeBack(){
 	if(empty()) return;
-	Node<T>* p = back->prev;
-	back->prev = p->prev;
-	p->prev->next = back;
+	Node<T>* p = pBackSent->prev;
+	pBackSent->prev = p->prev;
+	p->prev->next = pBackSent;
 	delete p;
 	length--;
 }
@@ -162,7 +163,7 @@ const T* Deque<T>::front() const{
 		cout<<"Deque vazio!";
 		return nullptr;
 	}else{
-		return &front->next->get_item();	
+		return &pFrontSent->next->get_item();	
 	}
 }
 
@@ -173,13 +174,13 @@ const T* Deque<T>::back() const{
 		cout<<"Deque vazio!";
 		return nullptr;
 	}else{
-		return &back->prev->get_item();
+		return &pBackSent->prev->get_item();
 	}
 }
 
 template <typename T>
 ListNavigator<T> const Deque<T>::getDequeNavigator(){
-	return ListNavigator<T>{front->next};
+	return ListNavigator<T>(pFrontSent->next);
 }
 
 template <typename T>
@@ -188,7 +189,7 @@ int Deque<T>::size(){
 }
 
 template <typename T>
-bool Deque<T>::empty(){
+bool Deque<T>::empty() const{
 	if(length == 0){
 		return true;
 	}
@@ -207,7 +208,7 @@ public:
 	~Queue(){} //aciona o destrutor do deque para destruir a fila
 	void enqueue(T item);
 	void dequeue();
-	const T& front();
+	const T* front();
 	bool empty();
 	int size();
 	ListNavigator<T> getQueueNavigator();
@@ -224,7 +225,7 @@ void Queue<T>::dequeue(){
    }
 
 template <typename T>
-const T& Queue<T>::front(){
+const T* Queue<T>::front(){
    	return dequeQueue.front();
    }
 
@@ -320,6 +321,9 @@ void Comando::print() const{
 //------------------------------------------------------------------------------------------------------
 
 bool biggySearchFEP(Queue<Comando>& FEP, int codSearch){
+	if(FEP.empty()){
+		return false;
+	}
 	ListNavigator<Comando> fepNav = FEP.getQueueNavigator();
 	Comando comand;
 
@@ -337,39 +341,80 @@ bool biggySearchFEP(Queue<Comando>& FEP, int codSearch){
 }
 
 void biggyOrganize(Queue<Comando>& biggyComandos, Queue<Comando>& FEP, Queue<int>& cancel, Queue<int>& DESC){
+	if(biggyComandos.empty()){
+		return;
+	}
 	ListNavigator<Comando> queueNav = biggyComandos.getQueueNavigator();
 	Comando comand;
-	while(queueNav.end()){
+	while(true){
 		queueNav.getCurrentItem(comand);
 
 		switch(comand.getStatus()){
 		case 'E':
 			FEP.enqueue(comand);
-			queueNav.next();
 			break;
 		case 'C':
 			//precisa verificar se ja ta na FEP
 			if(biggySearchFEP(FEP, comand.getCod())){
 				FEP.enqueue(comand);
-				queueNav.next();
 			}else{
 				cancel.enqueue(comand.getCod());
-				queueNav.next();
 			}
 			break;
 		case 'A':
 			//precisa verificar se ja ta na FEP
 			if(biggySearchFEP(FEP, comand.getCod())){
 				FEP.enqueue(comand);
-				queueNav.next();
 			}else{
 				DESC.enqueue(comand.getCod());
-				queueNav.next();
 			}
 			break;
+		case '-':
+			FEP.enqueue(comand);
 		}
+		if(queueNav.end()){
+			break;
+		}
+		queueNav.next();
 	}
 }
+
+void biggyPrintFEP(Queue<Comando>& queue) {
+    cout << "FEP = [";
+    if(!queue.empty()){
+    	ListNavigator<Comando> queueNav = queue.getQueueNavigator();
+    Comando comand;
+    while (true) {
+        queueNav.getCurrentItem(comand);
+        comand.print();
+        if (queueNav.end()){
+        		break;
+        } 
+        cout << ", ";
+        queueNav.next();
+    	}
+
+    }
+    cout << "]" << endl;
+}
+
+void printQueue(const string queueName, Queue<int>& queue) {
+    cout << queueName << " = [";
+    if(!queue.empty()){
+    	ListNavigator<int> queueNav = queue.getQueueNavigator();
+    	int cod;
+    	while (true) {
+        queueNav.getCurrentItem(cod);
+        cout << cod;
+        if (queueNav.end()) break;
+        cout << ", ";
+        queueNav.next();
+    	}	
+
+    }
+    cout << "]" << endl;
+}
+
 
 
 
@@ -386,15 +431,24 @@ int main(){
 
 
 	//Biggy recebe a lista de comandos
-	while(status!='-'){
-		cin >> status;
-		cin >> cod;
+	while(true){
+		cin >> status >> cod;
 		Comando c{status, cod};
 		biggyComandos.enqueue(c);
+		if(status == '-'){
+			break;
+		}
 	}
 
 	//Biggy inicia a conferencia dos comandos
 	biggyOrganize(biggyComandos, FEP, cancel, DESC);
+
+	//Biggy mostra suas filas
+	cout << "Biggy:"<<endl;
+	biggyPrintFEP(FEP);
+	printQueue("CANCEL", cancel);
+	printQueue("DESC", DESC);
+
 
 
 	return 0;
