@@ -195,51 +195,49 @@ bool Deque<T>::empty() const{
     }
     return false;
 }
-
 //-----------------------------------------------------------------------------------------------------------
-
+   
 template <typename T>
-class Queue{
-private: 
-    int length = 0;
-    Deque<T> dequeQueue;
+class Stack{
+private:
+       int length;
+       Deque<T> dequeStack;
 public:
-    Queue():length(0){}
-    ~Queue(){} //aciona o destrutor do deque para destruir a fila
-    void enqueue(T item);
-    void dequeue();
-    const T* front();
-    bool empty();
-    int size();
-    ListNavigator<T> getQueueNavigator();
-    };
+       Stack():length(0){}
+       void push(T item);
+       void pop();
+       const T& top();
+       bool empty();
+       int size();
+       ListNavigator<T> getStackNavigator();
+   };
 
 template <typename T>
-void Queue<T>::enqueue(T item){
-       dequeQueue.insertBack(item);
+void Stack<T>::push(T item){
+       dequeStack.insertFront(item);
+   }
+   
+template <typename T>
+void Stack<T>::pop(){
+       dequeStack.removeFront();
    }
 
 template <typename T>
-void Queue<T>::dequeue(){
-       dequeQueue.removeFront();
+const T& Stack<T>::top(){
+       return *dequeStack.front();
    }
 
 template <typename T>
-const T* Queue<T>::front(){
-       return dequeQueue.front();
-   }
-
-template <typename T>   
-bool Queue<T>::empty(){
-       return dequeQueue.empty();
+bool Stack<T>::empty(){
+       return dequeStack.empty();
    }
 
 template <typename T>
-int Queue<T>::size(){
-       return dequeQueue.size();
+int Stack<T>::size(){
+       return dequeStack.size();
    }
 
 template <typename T>
-ListNavigator<T> Queue<T>::getQueueNavigator(){
-       return dequeQueue.getDequeNavigator();
+ListNavigator<T> Stack<T>::getStackNavigator(){
+       return dequeStack.getDequeNavigator();
    }
