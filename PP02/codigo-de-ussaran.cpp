@@ -23,15 +23,24 @@ private:
 	K key;
 	V value;
 public:
-	
-
+	HashNode(K key, V value): key(key), value(value){}
+	K& getKey();
+	V& getValue();
 }
 
+template<typename V>
+V& HashNode<V>::getValue() {return value;}
+
+template <typename K>
+K& HashNode<K>::getKey(){return key;}
+
+
+
 //----------------------------------------------------------------------------------------------------------------------------
-<typename T>
+template <typename T>
 class HashTable{
 private:
-	T
+	
 
 public:
 
