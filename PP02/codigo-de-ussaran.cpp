@@ -295,16 +295,116 @@ ListNavigator<T> Stack<T>::getStackNavigator(){
 
 class SymbolPair{
 private:
-	String key; //simbolo ianteco
-	String value; //simbolo azuri
+	string key; //simbolo ianteco
+	string value; //simbolo azuri
 public:
 	SymbolPair() : key(""), value(""){}
 	SymbolPair(string k, string v): key(k), value(v){}
-	String getKey();
-	String getValue();
-	void setValue(String v);
+	string getKey();
+	string getValue();
+	void setValue(string v);
 };
 
-String SymbolPair::getKey(){return key;}
-String SymbolPair::getValue(){return value;}
-void SymbolPair::setValue(String v){value = v;}
+string SymbolPair::getKey(){return key;}
+string SymbolPair::getValue(){return value;}
+void SymbolPair::setValue(string v){value = v;}
+
+//------------------------------------------------------------------------------------------------------
+
+template <typename T>
+class HashTable{
+private:
+	Deque<T>* table; 
+	int M;
+
+    int hash (string key){
+        int sum = 0;
+        for(char c  : key){
+            sum += (int) c; //faz um casting de cada caracter para o seu valor em ascii e soma
+        }
+        return sum % M; //retorna o valor equivalente a string
+    }
+
+public:
+    //construtor
+    HashTable(int size): M(size){
+        table = new Deque<T>[M];
+    }
+
+    //destrutor
+    ~HashTable(){
+        delete[]  table;
+    }
+
+    void insert (T item);
+    const T* search (string key);
+    void remove (string key);
+};
+
+void HashTable::insert (T item){
+    int index = hash(item.getKey());
+
+    //Percorre o deque desse indice procurando a chave
+    ListNavigator<T> nav = table[index].getDequeNavigator();
+    T current;
+
+    //caso o navigator encontre a chave, ele so atualiza o valor
+    while(nav.getCurrentItem(current)){
+        if(current.getKey() == item.getKey()){
+            current.setValue(item.getValue());
+            return;
+        }
+        if(nav.end()){
+            break;
+        }
+        nav.next();
+
+    }
+
+    //se o navigator nao achar a chave, ele insere no final do deque
+    table[index].insertBack(item);
+}
+
+const T* HashTable::search (string key){
+    int index = hash(key);
+
+    ListNavigator<T> nav = table[index].getDequeNavigator();
+    T current;
+
+    while(nav.getCurrentItem(current)){
+        if(current.getKey() == key){
+            return table[index].front(); //achamoo
+        }
+
+        if(nav.end()){
+            break;
+        }
+    }
+
+    return nullptr; //quando nao achar 
+}
+
+void HashTable::remove (string key){
+    int index = hash(key);
+
+    Deque<T> temp; //objetivo: reconstruir o deque sem o elemento a ser removido
+    ListNavigator<T> nav = table[index].getDequeNavigator();
+    T current;
+
+    while(nav.getCurrentItem(current)){
+        if(current.getKey() != key){
+            temp.insertBack(current); //se nao for a chave a ser removida, sera copiada pro novo deque
+        }
+        if(nav.end()){
+            break;
+        }
+        nav.next();
+    }
+
+    table[index] = temp;
+}
+
+//------------------------------------------------------------------------------------------------------
+int main(){
+    return 0;
+}
