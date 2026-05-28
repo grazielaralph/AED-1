@@ -341,6 +341,7 @@ public:
     void remove (string key);
 };
 
+template <typename T>
 void HashTable::insert (T item){
     int index = hash(item.getKey());
 
@@ -405,6 +406,49 @@ void HashTable::remove (string key){
 }
 
 //------------------------------------------------------------------------------------------------------
+void fillDict(HashTable<SymbolPair>& dict) {
+    string symbols[][2] = {
+        {":::", "A"}, {".::","B"}, {":.:","C"}, {"::.", "D"},
+        {":..","E"},  {".:.","F"}, {"..:", "G"}, {"...","H"},
+        {"|::","I"},  {":|:","J"}, {"::|","K"},  {"|.:","L"},
+        {".|:","M"},  {".:| ","N"},{"|:.","O"},  {":|.","P"},
+        {":.| ","Q"}, {"|..","R"}, {"|.","S"},   {"..|","T"},
+        {".||","U"},  {"|.|","V"}, {"||.","W"},  {"-.-","X"},
+        {".--","Y"},  {"--.","Z"}, {"---"," "},  {"~","~"}
+    };
+
+    int n = sizeof(symbols) / sizeof(symbols[0]);
+    for (int i = 0; i < n; i++)
+        dict.insert(SymbolPair(symbols[i][0], symbols[i][1]));
+}
+
+string translateLine (const string& line, HashTable<SymbolPair>& dict){
+    string result = "";
+    int i = 0;
+
+    while(i<line.size()){
+        if(line.size() - i == 1){
+            //verifica se e o final com os dois pontos
+            result += ":";
+            break;
+        }
+        string symbol = line.substr(i, 3);
+        const SymbolPair* pair = dict.search(symbol);
+        if(pair){
+            result += pair->getValue();
+        }
+        i += 3;
+    }
+    return result;
+}
+
+//------------------------------------------------------------------------------------------------------
 int main(){
+    HashTable<SymbolPair> dict(35);
+
+    //inserindo os simbolos na tabela
+    fillDict(dict);
+
+
     return 0;
 }
