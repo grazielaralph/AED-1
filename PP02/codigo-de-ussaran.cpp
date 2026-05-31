@@ -300,13 +300,13 @@ private:
 public:
 	SymbolPair() : key(""), value(""){}
 	SymbolPair(string k, string v): key(k), value(v){}
-	string getKey();
-	string getValue();
+	string getKey() ;
+	string getValue() const;
 	void setValue(string v);
 };
 
 string SymbolPair::getKey(){return key;}
-string SymbolPair::getValue(){return value;}
+string SymbolPair::getValue() const{return value;}
 void SymbolPair::setValue(string v){value = v;}
 
 //------------------------------------------------------------------------------------------------------
@@ -342,7 +342,7 @@ public:
 };
 
 template <typename T>
-void HashTable::insert (T item){
+void HashTable<T>::insert (T item){
     int index = hash(item.getKey());
 
     //Percorre o deque desse indice procurando a chave
@@ -366,7 +366,8 @@ void HashTable::insert (T item){
     table[index].insertBack(item);
 }
 
-const T* HashTable::search (string key){
+template <typename T>
+const T* HashTable<T>::search (string key){
     int index = hash(key);
 
     ListNavigator<T> nav = table[index].getDequeNavigator();
@@ -385,7 +386,8 @@ const T* HashTable::search (string key){
     return nullptr; //quando nao achar 
 }
 
-void HashTable::remove (string key){
+template <typename T>
+void HashTable<T>::remove (string key){
     int index = hash(key);
 
     Deque<T> temp; //objetivo: reconstruir o deque sem o elemento a ser removido
