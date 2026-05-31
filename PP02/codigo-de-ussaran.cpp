@@ -10,11 +10,11 @@ public:
     Node<T>* prev;
     Node(): next(nullptr),prev(nullptr) {}
     Node(T item): item(item), next(nullptr), prev(nullptr) {}
-    T& get_item();
+    T& getItem();
 };
 
 template<typename T>
-T& Node<T>::get_item() { return item; }
+T& Node<T>::getItem() { return item; }
 
 //------------------------------------------------------------------------------------------
 
@@ -390,7 +390,7 @@ template <typename T>
 void HashTable<T>::remove (string key){
     int index = hash(key);
 
-    Deque<T> temp; //objetivo: reconstruir o deque sem o elemento a ser removido
+    Deque<T> temp; //reconstruir o deque sem o elemento a ser removido
     ListNavigator<T> nav = table[index].getDequeNavigator();
     T current;
 
@@ -446,11 +446,19 @@ string translateLine (const string& line, HashTable<SymbolPair>& dict){
 
 //------------------------------------------------------------------------------------------------------
 int main(){
-    HashTable<SymbolPair> dict(35);
+    int M = 13; 
+    HashTable<SymbolPair> dict(M);
 
     //inserindo os simbolos na tabela
     fillDict(dict);
 
 
+
+
     return 0;
 }
+
+/*DUVIDA PRA SEGUNDA:
+1. Como faço as chamadas de procedimento e das funções de enfileirar e 
+desenfileirar a partir das 
+strings geradas?*/
