@@ -1,4 +1,6 @@
 #include <iostream>
+#include <string>
+#include <string_view>
 using namespace std;
 
 template<typename T>
@@ -56,7 +58,7 @@ bool ListNavigator<T>::getCurrentItem(T& item){
     if(current == nullptr){
         return false;
     }
-    item = current->get_item(); //pega o item cujo endereco esta armazenado no ponteiro "navegante"
+    item = current->getItem(); //pega o item cujo endereco esta armazenado no ponteiro "navegante"
     return true;
 }
 
@@ -163,7 +165,7 @@ const T* Deque<T>::front() const{
         cout<<"Deque vazio!";
         return nullptr;
     }else{
-        return &pFrontSent->next->get_item();    
+        return &pFrontSent->next->getItem();    
     }
 }
 
@@ -174,7 +176,7 @@ const T* Deque<T>::back() const{
         cout<<"Deque vazio!";
         return nullptr;
     }else{
-        return &pBackSent->prev->get_item();
+        return &pBackSent->prev->getItem();
     }
 }
 
@@ -311,20 +313,28 @@ void SymbolPair::setValue(string v){value = v;}
 
 //------------------------------------------------------------------------------------------------------
 
+
+constexpr size_t hash(string_view s, size_t M){
+    if(s.empty() || M==0){
+        return 0;
+    }
+
+    size_t hash_value = 0;
+
+    for(size_t i = 0; i < s.length(); i++){
+        unsigned char c = static_cast <unsigned char>(s[i]);
+        hash_value = (hash_value * 128 + c) % M;
+    }
+
+    return hash_value;
+}
+
 template <typename T>
 class HashTable{
 private:
 	Deque<T>* table; 
 	int M;
-
-    int hash (string key){
-        int sum = 0;
-        for(char c  : key){
-            sum += (int) c; //faz um casting de cada caracter para o seu valor em ascii e soma
-        }
-        return sum % M; //retorna o valor equivalente a string
-    }
-
+    T lastFound; //guarda o ultimo item quebrado
 public:
     //construtor
     HashTable(int size): M(size){
@@ -343,7 +353,7 @@ public:
 
 template <typename T>
 void HashTable<T>::insert (T item){
-    int index = hash(item.getKey());
+    int index = hash(item.getKey(), M);
 
     //Percorre o deque desse indice procurando a chave
     ListNavigator<T> nav = table[index].getDequeNavigator();
@@ -368,27 +378,31 @@ void HashTable<T>::insert (T item){
 
 template <typename T>
 const T* HashTable<T>::search (string key){
-    int index = hash(key);
+    int index = hash(key, M);
 
     ListNavigator<T> nav = table[index].getDequeNavigator();
     T current;
 
     while(nav.getCurrentItem(current)){
         if(current.getKey() == key){
-            return table[index].front(); //achamoo
+            lastFound = current; //copia para o atributo da classe
+            return &lastFound;
         }
 
         if(nav.end()){
             break;
         }
+
+        nav.next();
     }
+    
 
     return nullptr; //quando nao achar 
 }
 
 template <typename T>
 void HashTable<T>::remove (string key){
-    int index = hash(key);
+    int index = hash(key, M);
 
     Deque<T> temp; //reconstruir o deque sem o elemento a ser removido
     ListNavigator<T> nav = table[index].getDequeNavigator();
@@ -407,14 +421,15 @@ void HashTable<T>::remove (string key){
     table[index] = temp;
 }
 
+
 //------------------------------------------------------------------------------------------------------
 void fillDict(HashTable<SymbolPair>& dict) {
     string symbols[][2] = {
         {":::", "A"}, {".::","B"}, {":.:","C"}, {"::.", "D"},
         {":..","E"},  {".:.","F"}, {"..:", "G"}, {"...","H"},
         {"|::","I"},  {":|:","J"}, {"::|","K"},  {"|.:","L"},
-        {".|:","M"},  {".:| ","N"},{"|:.","O"},  {":|.","P"},
-        {":.| ","Q"}, {"|..","R"}, {"|.","S"},   {"..|","T"},
+        {".|:","M"},  {".:|","N"},{"|:.","O"},  {":|.","P"},
+        {":.|","Q"}, {"|..","R"}, {".|.","S"},   {"..|","T"},
         {".||","U"},  {"|.|","V"}, {"||.","W"},  {"-.-","X"},
         {".--","Y"},  {"--.","Z"}, {"---"," "},  {"~","~"}
     };
@@ -448,17 +463,40 @@ string translateLine (const string& line, HashTable<SymbolPair>& dict){
 int main(){
     int M = 13; 
     HashTable<SymbolPair> dict(M);
-
+    HashTable<SymbolPair> procedimentos(M); //armazena o indice fixo onde cada procedimento inicia 
+    
     //inserindo os simbolos na tabela
     fillDict(dict);
+    
+    string linhas[1000]; //vetor pra armazenar as linhas traduzidas
+    int totalLinhas = 0; 
 
+    string linha;
 
+    while(getline(cin, linha)){
+        string traduzida = translateLine(linha, dict);
+        linhas[totalLinhas] = traduzida;
 
+        if(!traduzida.empty() && traduzida.back() == ':'){
+            string nome(1, traduzida[0]); //transforma o char traduzido em string e instancia uma copia do nome do procedimento
+            procedimentos.insert(SymbolPair(nome, to_string(totalLinhas)));
+        }
+
+        totalLinhas++; //incrementa o total de linhas traduzidas pra poder acessa-las futuramente
+
+        if(traduzida=="~"){
+            break;
+        }
+
+    }   
+
+    Queue<char> filaInterna;
+    Stack<int> pilhaRetorno;
+
+    //procurando o procedimento Z
+    const SymbolPair* z = procedimentos.search("Z");
+    int i = stoi(z->getValue());
 
     return 0;
 }
 
-/*DUVIDA PRA SEGUNDA:
-1. Como faço as chamadas de procedimento e das funções de enfileirar e 
-desenfileirar a partir das 
-strings geradas?*/
