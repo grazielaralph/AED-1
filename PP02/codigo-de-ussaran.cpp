@@ -2,6 +2,11 @@
 #include <string>
 #include <string_view>
 using namespace std;
+const int FIM_PROCEDIMENTO = 1;
+const int ENFILEIRA = 2;
+const int DESENFILEIRA = 3;
+const int CHAMADA_PROCEDIMENTO = 4;
+
 
 template<typename T>
 class Node {
@@ -348,21 +353,22 @@ public:
 
     void insert (T item);
     const T* search (string key);
-    void remove (string key);
 };
 
 template <typename T>
 void HashTable<T>::insert (T item){
-    int index = hash(item.getKey(), M);
+    int index = ::hash(item.getKey(), M);
 
-    //Percorre o deque desse indice procurando a chave
+    if(!table[index].empty()){
+        //Percorre o deque desse indice procurando a chave
     ListNavigator<T> nav = table[index].getDequeNavigator();
     T current;
 
     //caso o navigator encontre a chave, ele so atualiza o valor
     while(nav.getCurrentItem(current)){
         if(current.getKey() == item.getKey()){
-            current.setValue(item.getValue());
+            table[index].removeFront();
+            table[index].insertBack(item);
             return;
         }
         if(nav.end()){
@@ -370,15 +376,22 @@ void HashTable<T>::insert (T item){
         }
         nav.next();
 
+        }
+   
     }
 
     //se o navigator nao achar a chave, ele insere no final do deque
-    table[index].insertBack(item);
+    table[index].insertBack(item); 
+    
 }
 
 template <typename T>
 const T* HashTable<T>::search (string key){
-    int index = hash(key, M);
+    int index = ::hash(key, M);
+
+    if(table[index].empty()){
+        return nullptr;
+    }
 
     ListNavigator<T> nav = table[index].getDequeNavigator();
     T current;
@@ -400,29 +413,11 @@ const T* HashTable<T>::search (string key){
     return nullptr; //quando nao achar 
 }
 
-template <typename T>
-void HashTable<T>::remove (string key){
-    int index = hash(key, M);
-
-    Deque<T> temp; //reconstruir o deque sem o elemento a ser removido
-    ListNavigator<T> nav = table[index].getDequeNavigator();
-    T current;
-
-    while(nav.getCurrentItem(current)){
-        if(current.getKey() != key){
-            temp.insertBack(current); //se nao for a chave a ser removida, sera copiada pro novo deque
-        }
-        if(nav.end()){
-            break;
-        }
-        nav.next();
-    }
-
-    table[index] = temp;
-}
-
 
 //------------------------------------------------------------------------------------------------------
+//Interpretador Ianteco 
+
+//preenche a hashtable dicionario
 void fillDict(HashTable<SymbolPair>& dict) {
     string symbols[][2] = {
         {":::", "A"}, {".::","B"}, {":.:","C"}, {"::.", "D"},
@@ -439,6 +434,7 @@ void fillDict(HashTable<SymbolPair>& dict) {
         dict.insert(SymbolPair(symbols[i][0], symbols[i][1]));
 }
 
+//traduz linha a linha
 string translateLine (const string& line, HashTable<SymbolPair>& dict){
     string result = "";
     int i = 0;
@@ -456,75 +452,85 @@ string translateLine (const string& line, HashTable<SymbolPair>& dict){
         }
         i += 3;
     }
+
+    size_t inicio = result.find_first_not_of(' ');
+    if(inicio == string::npos){
+        return "";
+    }
+
+    result = result.substr(inicio);
     return result;
 }
 
 //verifica qual e o comando e retorna um valor pro switch-case
 int getLineType(const string line){ 
     if(line.empty()){
-        //fim do procedimento vigente
-        return 1;
-    }else if(line.substr(0,9) == "ENFILEIRA"){return 2;}
-    else if(line == "DESENFILEIRA"){return 3;}
-    else if(line.back() != ':'){return 4;}
+        return FIM_PROCEDIMENTO;
+    }else if(line.substr(0,9) == "ENFILEIRA"){return ENFILEIRA;}
+    else if(line == "DESENFILEIRA"){return DESENFILEIRA;}
+    else if(line.back() != ':'){return CHAMADA_PROCEDIMENTO;}
     return 0;
 }
 
-//------------------------------------------------------------------------------------------------------
-int main(){
-    int M = 13; 
-    HashTable<SymbolPair> dict(M);
-    HashTable<SymbolPair> procedimentos(M); //armazena o indice fixo onde cada procedimento inicia 
+void interpretadorIanteco(string mensagemIanteco, HashTable<SymbolPair>& dict, int M, HashTable<SymbolPair>& procedimentos, string linhas[], int &totalLinhas){
     
-    //inserindo os simbolos na tabela
-    fillDict(dict);
-    
-    string linhas[1000]; //vetor pra armazenar as linhas traduzidas
-    int totalLinhas = 0; 
+    //traduzo a mensagem em ianteco e jogo no vetor
+    string mensagemAzuri = translateLine(mensagemIanteco, dict);
+    linhas[totalLinhas] = mensagemAzuri;
 
-    string linha;
+    if(!mensagemAzuri.empty() && mensagemAzuri.back() == ':'){
+        string nome(1, mensagemAzuri[0]);
+        procedimentos.insert(SymbolPair(nome, to_string(totalLinhas)));
+    }
 
-    while(getline(cin, linha)){
-        string traduzida = translateLine(linha, dict);
-        linhas[totalLinhas] = traduzida;
+    totalLinhas++;
+}
 
-        if(!traduzida.empty() && traduzida.back() == ':'){
-            string nome(1, traduzida[0]); //transforma o char traduzido em string e instancia uma copia do nome do procedimento
-            procedimentos.insert(SymbolPair(nome, to_string(totalLinhas)));
-        }
+void executar(HashTable<SymbolPair>& procedimentos, int totalLinhas, string linhas[]){
+    //encontrar o procedimento z
+    const SymbolPair* z = procedimentos.search("Z");
+    if (z == nullptr) {
+        cout << "Procedimento principal Z nao encontrado!" << endl;
+        return;
+    }
 
-        totalLinhas++; //incrementa o total de linhas traduzidas pra poder acessa-las futuramente
-
-        if(traduzida=="~"){
-            break;
-        }
-
-    }   
-
+    int i = stoi(z -> getValue()); //converte o indice z de string pra int
     Queue<char> filaInterna;
     Stack<int> pilhaRetorno;
 
-    //procurando o procedimento Z
-    const SymbolPair* z = procedimentos.search("Z");
-    int i = stoi(z->getValue());
+    while(i < totalLinhas && linhas[i] != "~"){
+        string mensagemCorrente = linhas[i];
 
-    while (linhas[i] != "~"){
-        string atual = linhas[i];
+        switch(getLineType(mensagemCorrente)){
+        case FIM_PROCEDIMENTO:
+            if (!pilhaRetorno.empty())
+            {
+                i = pilhaRetorno.top();
+                pilhaRetorno.pop();
+            }else{
+                i = totalLinhas;
+                continue;
+            }
+            break;
+        case ENFILEIRA:
+            if(mensagemCorrente.size() >= 11){
+                filaInterna.enqueue(mensagemCorrente[10]);
+            }
+            break;
+        case DESENFILEIRA:
+            if(!filaInterna.empty()){
+                filaInterna.dequeue();
+            }
+            break;
+        case CHAMADA_PROCEDIMENTO:
+            {
+                const SymbolPair* proc = procedimentos.search(mensagemCorrente);
+                if(proc != nullptr){
+                    pilhaRetorno.push(i);
+                    i = stoi(proc->getValue());
+                }
 
-        switch(getLineType(atual)){
-        case 1: //fim do procedimento
-            i = pilhaRetorno.top();
-            pilhaRetorno.pop(); 
-            break;
-        case 2: //enfileira
-            filaInterna.enqueue(atual[10]);
-            break;
-        case 3: //desenfileira
-            filaInterna.dequeue();
-            break;
-        case 4: //chamada de procedimento
-            pilhaRetorno.push(i);
-            i = stoi(procedimentos.search(atual)->getValue());
+            }
             break;
         default:
             break;
@@ -533,13 +539,38 @@ int main(){
         i++;
     }
 
+    //mensagem traduzida
     while(!filaInterna.empty()){
         cout << *filaInterna.front();
         filaInterna.dequeue();
     }
 
     cout << endl;
+}
+//------------------------------------------------------------------------------------------------------
+int main(){
+    int M = 13; 
+    HashTable<SymbolPair> dict(M);
+    HashTable<SymbolPair> procedimentos(M); //armazena o indice fixo onde cada procedimento inicia 
+    string linhas[1000];
+    int totalLinhas = 0; //nao vai inicializar com 0 toda vez que eu chamar
+    
+    //inserindo os simbolos na tabela
+    fillDict(dict);
+    
+    string linha;
 
+    while(true){
+        getline(cin, linha);
+        if(linha == "~"){
+            break;
+        }
+        interpretadorIanteco(linha, dict, M, procedimentos, linhas, totalLinhas);
+        
+    }
+
+
+    executar(procedimentos, totalLinhas, linhas);
     return 0;
 }
 
