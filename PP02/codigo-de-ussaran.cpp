@@ -459,6 +459,17 @@ string translateLine (const string& line, HashTable<SymbolPair>& dict){
     return result;
 }
 
+//verifica qual e o comando e retorna um valor pro switch-case
+int getLineType(const string line){ 
+    if(line.empty()){
+        //fim do procedimento vigente
+        return 1;
+    }else if(line.substr(0,9) == "ENFILEIRA"){return 2;}
+    else if(line == "DESENFILEIRA"){return 3;}
+    else if(line.back() != ':'){return 4;}
+    return 0;
+}
+
 //------------------------------------------------------------------------------------------------------
 int main(){
     int M = 13; 
@@ -496,6 +507,38 @@ int main(){
     //procurando o procedimento Z
     const SymbolPair* z = procedimentos.search("Z");
     int i = stoi(z->getValue());
+
+    while (linhas[i] != "~"){
+        string atual = linhas[i];
+
+        switch(getLineType(atual)){
+        case 1: //fim do procedimento
+            i = pilhaRetorno.top();
+            pilhaRetorno.pop(); 
+            break;
+        case 2: //enfileira
+            filaInterna.enqueue(atual[10]);
+            break;
+        case 3: //desenfileira
+            filaInterna.dequeue();
+            break;
+        case 4: //chamada de procedimento
+            pilhaRetorno.push(i);
+            i = stoi(procedimentos.search(atual)->getValue());
+            break;
+        default:
+            break;
+        }
+
+        i++;
+    }
+
+    while(!filaInterna.empty()){
+        cout << *filaInterna.front();
+        filaInterna.dequeue();
+    }
+
+    cout << endl;
 
     return 0;
 }
