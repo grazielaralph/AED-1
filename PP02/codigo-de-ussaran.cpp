@@ -2,11 +2,6 @@
 #include <string>
 #include <string_view>
 using namespace std;
-const int FIM_PROCEDIMENTO = 1;
-const int ENFILEIRA = 2;
-const int DESENFILEIRA = 3;
-const int CHAMADA_PROCEDIMENTO = 4;
-
 
 template<typename T>
 class Node {
@@ -324,14 +319,14 @@ constexpr size_t hash(string_view s, size_t M){
         return 0;
     }
 
-    size_t hash_value = 0;
+    size_t hashValue = 0;
 
     for(size_t i = 0; i < s.length(); i++){
         unsigned char c = static_cast <unsigned char>(s[i]);
-        hash_value = (hash_value * 128 + c) % M;
+        hashValue = (hashValue * 128 + c) % M;
     }
 
-    return hash_value;
+    return hashValue;
 }
 
 template <typename T>
@@ -415,6 +410,17 @@ const T* HashTable<T>::search (string key){
 
 
 //------------------------------------------------------------------------------------------------------
+
+enum class LineType{
+    FIM_PROCEDIMENTO = 1,
+    ENFILEIRA = 2,
+    DESENFILEIRA = 3,
+    CHAMADA_PROCEDIMENTO = 4,
+    DEFINICAO_PROCEDIMENTO = 5
+};
+
+//------------------------------------------------------------------------------------------------------
+
 //Interpretador Ianteco 
 
 //preenche a hashtable dicionario
@@ -463,14 +469,13 @@ string translateLine (const string& line, HashTable<SymbolPair>& dict){
 }
 
 //verifica qual e o comando e retorna um valor pro switch-case
-int getLineType(const string line){ 
-    if(line.empty()){
-        return FIM_PROCEDIMENTO;
-    }else if(line.substr(0,9) == "ENFILEIRA"){return ENFILEIRA;}
-    else if(line == "DESENFILEIRA"){return DESENFILEIRA;}
-    else if(line.back() != ':'){return CHAMADA_PROCEDIMENTO;}
-    return 0;
-}
+LineType getLineType(const string line){ 
+    if(line.empty())                         return LineType::FIM_PROCEDIMENTO;
+    if(line.substr(0,9) == "ENFILEIRA")      return LineType::ENFILEIRA;
+    if(line == "DESENFILEIRA")               return LineType::DESENFILEIRA;
+    if(line.back() == ':')                   return LineType::DEFINICAO_PROCEDIMENTO;
+    return LineType::CHAMADA_PROCEDIMENTO;
+    }
 
 void interpretadorIanteco(string mensagemIanteco, HashTable<SymbolPair>& dict, int M, HashTable<SymbolPair>& procedimentos, string linhas[], int &totalLinhas){
     
@@ -502,7 +507,7 @@ void executar(HashTable<SymbolPair>& procedimentos, int totalLinhas, string linh
         string mensagemCorrente = linhas[i];
 
         switch(getLineType(mensagemCorrente)){
-        case FIM_PROCEDIMENTO:
+        case LineType::FIM_PROCEDIMENTO:
             if (!pilhaRetorno.empty())
             {
                 i = pilhaRetorno.top();
@@ -512,17 +517,17 @@ void executar(HashTable<SymbolPair>& procedimentos, int totalLinhas, string linh
                 continue;
             }
             break;
-        case ENFILEIRA:
+        case LineType::ENFILEIRA:
             if(mensagemCorrente.size() >= 11){
                 filaInterna.enqueue(mensagemCorrente[10]);
             }
             break;
-        case DESENFILEIRA:
+        case LineType::DESENFILEIRA:
             if(!filaInterna.empty()){
                 filaInterna.dequeue();
             }
             break;
-        case CHAMADA_PROCEDIMENTO:
+        case LineType::CHAMADA_PROCEDIMENTO:
             {
                 const SymbolPair* proc = procedimentos.search(mensagemCorrente);
                 if(proc != nullptr){
