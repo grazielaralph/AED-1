@@ -1,4 +1,6 @@
 #include <iostream>
+#include <string>
+#include <string_view>
 using namespace std;
 
 
@@ -16,6 +18,50 @@ public:
 
 template<typename T>
 T& Node<T>::getItem() { return item; }
+
+//------------------------------------------------------------------------------------------
+
+template<typename T>
+class ListNavigator{
+private:
+    Node<T>* current; //ponteiro que ira apontar pro item da vez
+public:
+    ListNavigator(Node<T>* start): current(start){}
+    bool begin();
+    bool end();//verifica se esta no final da fila
+    void next();
+    void prev();
+    bool getCurrentItem(T&); //pega o item corrente
+};
+
+template <typename T>
+bool ListNavigator<T>::begin(){
+    return current->prev == nullptr;
+}
+
+template<typename T>
+bool ListNavigator<T>::end(){
+    return current->next->next == nullptr;
+}
+
+template <typename T>
+void ListNavigator<T>::next(){
+    current = current->next; //o ponteiro do navigator recebe o endereco do proximo no
+}
+
+template <typename T>
+void ListNavigator<T>::prev(){
+    current = current->prev; //o ponteiro do navigator recebe o endereco do no anterior
+}
+
+template <typename T>
+bool ListNavigator<T>::getCurrentItem(T& item){
+    if(current == nullptr){
+        return false;
+    }
+    item = current->getItem(); //pega o item cujo endereco esta armazenado no ponteiro "navegante"
+    return true;
+}
 
 //------------------------------------------------------------------------------------------
 
@@ -120,7 +166,7 @@ const T* Deque<T>::front() const{
         cout<<"Deque vazio!";
         return nullptr;
     }else{
-        return &pFrontSent->next->get_item();    
+        return &pFrontSent->next->getItem();    
     }
 }
 
@@ -131,7 +177,7 @@ const T* Deque<T>::back() const{
         cout<<"Deque vazio!";
         return nullptr;
     }else{
-        return &pBackSent->prev->get_item();
+        return &pBackSent->prev->getItem();
     }
 }
 
@@ -173,36 +219,95 @@ T& NodeAVL<T>::getItem() { return item; }
 
 //-----------------------------------------------------------------------------------------------------------
 
-template <typename T>
+template <typename T, typename Key>
 class AvlTree{
 private:
-	//eu coloco root como privado ou como publico?
+    NodeAVL<T>* root;
+
+    //metodos basicos recursivos
+    void insertRec(NodeAVL<T>& node,const Key& key);
+    void deleteRec(NodeAVL<T> &node, const Key& key);
+    void preOrderRec(NodeAVL<T> node);
+    void inOrderRec(NodeAVL<T> node);
+    void postOrderRec(NodeAVL<T> node);
+
+    //metodos de balanceamento
+    void balance(NodeAVL<T>& node);
+    void updateHeight(NodeAVL<T>& node);
+    void height(NodeAVL<T> node);
+    void balFactor(NodeAVL<T> node);
 public:
-	AvlTree<T>* root;
 	AvlTree(): root(nullptr){};
-	//sao todos void? 
+
 	//metodos basicos
 	void insert(Key key);
-	void insertRec(NodeAVL& node, Key key);
-	void findMAX(NodeAVL node);
-	void delete(Key key);
-	void deleteRec(NodeAVL &node, Key key);
+	void findMAX(NodeAVL<T> init, NodeAVL<T> end);
+	void remove(Key key);
 	void preOrder();
-	void preOrderRec(NodeAVL node);
 	void inOrder();
-	void inOrderRec(NodeAVL node);
 	void postOrder();
-	void postOrderRec(NodeAVL node);
-	//metodos de balanceamento
-	void balance(NodeAVL& node);
-	void updateHeight(NodeAVL node);
-	void height(NodeAVL node);
-	void balFactor(NodeAVL node);
+
 	//metodos de rotacao
-	void rotateR();
-	void rotateL();
-	void rotateLR();
-	void rotateRL();
+	NodeAVL<T>* rotateR(NodeAVL<T>* y);
+	NodeAVL<T>* rotateL(NodeAVL<T>* x);
+	NodeAVL<T>* rotateLR(NodeAVL<T>* z);
+	NodeAVL<T>* rotateRL(NodeAVL<T>* z);
+};
+
+//metodos basicos
+template <typename T, typename Key>
+void AvlTree<T, Key>::insertRec(NodeAVL<T>& node, const Key& key){
+    if(node == nullptr){
+        node = new NodeAVL<T, Key>{key, 1};
+        return;
+    }
+
+}
+
+template <typename T, typename Key>
+void AvlTree<T, Key>::insert(Key key){
+    insertRec(root, key);
+}
+
+//metodos de balanceamento
+template <typename T>
+void AvlTree<T>::updateHeight(NodeAVL<T>& node){
+    node.height = 1+findMAX(height(node->left), height(node->right));
+}
+
+//metodos de rotacao
+template <typename T> //rotacao simples direita
+NodeAVL<T> AvlTree<T>::rotateR(NodeAVL *y){
+    NodeAVL<T> *x = y->left;
+    NodeAVL<T> *T2 = x->right;
+    x->right = y;
+    y->left = T2;
+    updateHeight(y);
+    updateHeight(x);
+    return x;
+}
+
+template <typename T> //rotacao simples esquerda
+NodeAVL<T> AvlTree<T>::rotateL(NodeAVL *x){
+    NodeAVL<T> *y = x->right;
+    NodeAVL<T> *T2 = y->left;
+    y->left = x;
+    x->right = T2;
+    updateHeight(x);
+    updateHeight(y);
+    return y;
+}
+
+template <typename T> //rotacao dupla direita
+NodeAVL<T> AvlTree<T>::rotateLR(NodeAVL *z){
+    z->left = rotateL(z->left); //rse no filho
+    return rotateR(z); //rsd na raiz
+}
+
+template <typename T> //rotacao dupla esquerda
+NodeAVL<T> AvlTree<T>::rotateRL(NodeAVL *z){
+    z->right = rotateR(z->right); //rsd no filho
+    return rotateL(z); //rse na raiz
 }
 
 //------------------------------------------------------------------------------------------
