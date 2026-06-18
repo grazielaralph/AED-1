@@ -226,23 +226,24 @@ private:
     NodeAVL<T>* root;
 
     //metodos basicos recursivos
-    void insertRec(NodeAVL<T>& node,const Key& key);
-    void deleteRec(NodeAVL<T> &node, const Key& key);
-    void preOrderRec(NodeAVL<T> node);
-    void inOrderRec(NodeAVL<T> node);
+    void insertRec(NodeAVL<T>*& node,const Key& key);
+    void deleteRec(NodeAVL<T>*& node, const Key& key);
+    void preOrderRec(NodeAVL<T>* node);
+    void inOrderRec(NodeAVL<T>* node);
     void postOrderRec(NodeAVL<T>* node);
+    NodeAVL<T>* findMAXRec(NodeAVL<T>* node);
 
     //metodos de balanceamento
     void balance(NodeAVL<T>& node);
     void updateHeight(NodeAVL<T>& node);
-    void height(NodeAVL<T> node);
-    void balFactor(NodeAVL<T> node);
+    int height(NodeAVL<T> node);
+    int balFactor(NodeAVL<T> node);
 public:
 	AvlTree(): root(nullptr){};
 
 	//metodos basicos
 	void insert(Key key);
-	void findMAX(NodeAVL<T> init, NodeAVL<T> end);
+	T* findMAX();
 	void remove(Key key);
 	void preOrder();
 	void inOrder();
@@ -254,6 +255,72 @@ public:
 	NodeAVL<T>* rotateLR(NodeAVL<T>* z);
 	NodeAVL<T>* rotateRL(NodeAVL<T>* z);
 };
+
+//findMax normal e recursivo rs
+template <typename T, typename Key>
+NodeAVL<T>* AvlTree<T, Key>::findMAXRec(NodeAVL<T>* node){
+    if(node->right == nullptr){
+        return node;
+    }
+    return findMAXRec(node->right);
+}
+
+template <typename T, typename Key>
+T*   AvlTree<T, Key>::findMAX(){
+    if(root == nullptr){
+        return nullptr;
+    }
+    return &findMAXRec(root)->getItem();
+}
+
+//metodos de percurso 
+template <typename T, typename Key>
+void AvlTree<T, Key>::preOrder(){
+    preOrderRec(root);
+}
+
+template <typename T, typename Key>
+void AvlTree<T, Key>::inOrder(){
+    inOrderRec(root);
+}
+
+template <typename T, typename Key>
+void AvlTree<T, Key>::postOrder(){
+    postOrderRec(root);
+}
+
+// no -> esquerda -> direita
+template <typename T, typename Key>
+void AvlTree<T, Key>::preOrderRec(NodeAVL<T>* node){
+    if(node == nullptr){
+        return;
+    }
+    cout << node->getItem().getKey() << " ";
+    preOrderRec(node->left);
+    preOrderRec(node->right);
+}
+
+// esquerda -> no -> direita
+template <typename T, typename Key>
+void AvlTree<T, Key>::inOrderRec(NodeAVL<T>* node){
+    if(node == nullptr){
+        return;
+    }
+    inOrderRec(node->left);
+    cout << node->getItem().getKey() << " ";
+    inOrderRec(node->right);
+}
+
+//esquerda -> direita -> no
+template <typename T, typename Key>
+void AvlTree<T, Key>::postOrderRec(NodeAVL<T>* node){
+    if(node == nullptr){
+        return;
+    }
+    postOrderRec(node->left);
+    postOrderRec(node->right);
+    cout << node->getItem().getKey();
+}
 
 //metodos basicos
 template <typename T, typename Key>
@@ -272,16 +339,13 @@ void AvlTree<T, Key>::insertRec(NodeAVL<T>*& node, const Key& key){
     }
     if(key < node->getItem().getKey()){
         insertRec(node->left, key);
+    }else if(key > node->getItem().getKey()){
+        insertRec(node->right, key);
     }else{
-        if(key > node->getItem().getKey()){
-            insertRec(node->right, key);
-        }
-    }else{
-        return;
+        return; //chave duplicada
     }
 
     balance(node);
-
 }
 
 template <typename T, typename Key>
@@ -291,8 +355,16 @@ void AvlTree<T, Key>::insert(Key key){
 
 //metodos de balanceamento
 template <typename T, typename Key>
+int AvlTree<T, Key>::balFactor(NodeAVL<T>* node){
+    if(node == nullptr){
+        return 0;
+    }
+    return -height(node->left) + height(node->right);
+}
+
+template <typename T, typename Key>
 void AvlTree<T, Key>::updateHeight(NodeAVL<T>& node){
-    node->height = 1 + max(getHeight(node->left), getHeight(node->right));
+    node->height = 1 + max(height(node->left), height(node->right));
 }
 
 template <typename T, typename Key>
@@ -320,7 +392,7 @@ void AvlTree<T, Key>::balance(NodeAVL<T>& node){
 
 //metodos de rotacao
 template <typename T, typename Key> //rotacao simples direita
-NodeAVL<T> AvlTree<T, Key>::rotateR(NodeAVL *y){
+NodeAVL<T>* AvlTree<T, Key>::rotateR(NodeAVL<T>* y){
     NodeAVL<T> *x = y->left;
     NodeAVL<T> *T2 = x->right;
     x->right = y;
@@ -331,7 +403,7 @@ NodeAVL<T> AvlTree<T, Key>::rotateR(NodeAVL *y){
 }
 
 template <typename T, typename Key> //rotacao simples esquerda
-NodeAVL<T> AvlTree<T, Key>::rotateL(NodeAVL *x){
+NodeAVL<T>* AvlTree<T, Key>::rotateL(NodeAVL<T>* x){
     NodeAVL<T> *y = x->right;
     NodeAVL<T> *T2 = y->left;
     y->left = x;
@@ -342,15 +414,69 @@ NodeAVL<T> AvlTree<T, Key>::rotateL(NodeAVL *x){
 }
 
 template <typename T, typename Key> //rotacao dupla direita
-NodeAVL<T> AvlTree<T, Key>::rotateLR(NodeAVL *z){
+NodeAVL<T>* AvlTree<T, Key>::rotateLR(NodeAVL<T>* z){
     z->left = rotateL(z->left); //rse no filho
     return rotateR(z); //rsd na raiz
 }
 
 template <typename T, typename Key> //rotacao dupla esquerda
-NodeAVL<T> AvlTree<T, Key>::rotateRL(NodeAVL *z){
+NodeAVL<T>* AvlTree<T, Key>::rotateRL(NodeAVL<T>* z){
     z->right = rotateR(z->right); //rsd no filho
     return rotateL(z); //rse na raiz
+}
+
+//apagar nos
+template <typename T, typename Key>
+void AvlTree<T, Key>::deleteRec(NodeAVL<T>*& node, const Key& key){
+    if(node == nullptr){
+        return;
+    }
+
+    if (key < node->getItem().getKey()) {
+        deleteRec(node->left, key);
+
+    } else if (key > node->getItem().getKey()) {
+        deleteRec(node->right, key);
+
+    } else {
+        //encontrou o no pra deletar
+        if (node->left == nullptr && node->right == nullptr) {
+            //caso 1 - folha
+            delete node;
+            node = nullptr;
+            return;
+
+        } else if (node->left == nullptr) {
+            //caso 2 - so tem filho direito 
+            NodeAVL<T>* temp = node;
+            node = node->right;
+            delete temp;
+            return;
+
+        } else if (node->right == nullptr) {
+            //caso 2 - so tem filho esquerdo
+            NodeAVL<T>* temp = node;
+            node = node->left;
+            delete temp;
+            return;
+
+        } else {
+            //caso 3 - tem dois filhos (o mais dificil)
+            //pega o maior da subarvore esquerda (predecessor)
+            NodeAVL<T>* predecessor = findMaxRec(node->left);
+            node->getItem() = predecessor->getItem(); //copia o item
+            //deleta o predecessor na subarvore esquerda
+            deleteRec(node->left, predecessor->getItem().getKey());
+        }
+    }
+
+    //balanceia no backtracking
+    balance(node);
+}
+
+template <typename T, typename Key>
+void AvlTree<T, Key>::remove(Key key){
+    deleteRec(root, key);
 }
 
 //------------------------------------------------------------------------------------------
