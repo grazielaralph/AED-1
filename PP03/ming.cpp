@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <string_view>
+#include <algorithm>
 using namespace std;
 
 
@@ -229,7 +230,7 @@ private:
     void deleteRec(NodeAVL<T> &node, const Key& key);
     void preOrderRec(NodeAVL<T> node);
     void inOrderRec(NodeAVL<T> node);
-    void postOrderRec(NodeAVL<T> node);
+    void postOrderRec(NodeAVL<T>* node);
 
     //metodos de balanceamento
     void balance(NodeAVL<T>& node);
@@ -256,11 +257,30 @@ public:
 
 //metodos basicos
 template <typename T, typename Key>
-void AvlTree<T, Key>::insertRec(NodeAVL<T>& node, const Key& key){
+int AvlTree<T, Key>::height(NodeAVL<T>* node){
     if(node == nullptr){
-        node = new NodeAVL<T, Key>{key, 1};
+        return 0;
+    }
+    return node->height;
+}
+
+template <typename T, typename Key>
+void AvlTree<T, Key>::insertRec(NodeAVL<T>*& node, const Key& key){
+    if(node == nullptr){
+        node = new NodeAVL<T>(key);
         return;
     }
+    if(key < node->getItem().getKey()){
+        insertRec(node->left, key);
+    }else{
+        if(key > node->getItem().getKey()){
+            insertRec(node->right, key);
+        }
+    }else{
+        return;
+    }
+
+    balance(node);
 
 }
 
@@ -270,14 +290,37 @@ void AvlTree<T, Key>::insert(Key key){
 }
 
 //metodos de balanceamento
-template <typename T>
-void AvlTree<T>::updateHeight(NodeAVL<T>& node){
-    node.height = 1+findMAX(height(node->left), height(node->right));
+template <typename T, typename Key>
+void AvlTree<T, Key>::updateHeight(NodeAVL<T>& node){
+    node->height = 1 + max(getHeight(node->left), getHeight(node->right));
 }
 
+template <typename T, typename Key>
+void AvlTree<T, Key>::balance(NodeAVL<T>& node){
+    updateHeight(node);
+    int bf = balFactor(node);
+
+    if(bf < -1){
+        if(balFactor(node->left) > 0){
+            node = rotateLR(node);
+        }else{
+            node = rotateR(node);
+        }
+    }else{
+        if(bf>1){
+            if(balFactor(node->right) < 0){
+                node = rotateRL(node);
+            }else{
+                node = rotateL(node);
+            }
+        }
+    }
+}
+
+
 //metodos de rotacao
-template <typename T> //rotacao simples direita
-NodeAVL<T> AvlTree<T>::rotateR(NodeAVL *y){
+template <typename T, typename Key> //rotacao simples direita
+NodeAVL<T> AvlTree<T, Key>::rotateR(NodeAVL *y){
     NodeAVL<T> *x = y->left;
     NodeAVL<T> *T2 = x->right;
     x->right = y;
@@ -287,8 +330,8 @@ NodeAVL<T> AvlTree<T>::rotateR(NodeAVL *y){
     return x;
 }
 
-template <typename T> //rotacao simples esquerda
-NodeAVL<T> AvlTree<T>::rotateL(NodeAVL *x){
+template <typename T, typename Key> //rotacao simples esquerda
+NodeAVL<T> AvlTree<T, Key>::rotateL(NodeAVL *x){
     NodeAVL<T> *y = x->right;
     NodeAVL<T> *T2 = y->left;
     y->left = x;
@@ -298,14 +341,14 @@ NodeAVL<T> AvlTree<T>::rotateL(NodeAVL *x){
     return y;
 }
 
-template <typename T> //rotacao dupla direita
-NodeAVL<T> AvlTree<T>::rotateLR(NodeAVL *z){
+template <typename T, typename Key> //rotacao dupla direita
+NodeAVL<T> AvlTree<T, Key>::rotateLR(NodeAVL *z){
     z->left = rotateL(z->left); //rse no filho
     return rotateR(z); //rsd na raiz
 }
 
-template <typename T> //rotacao dupla esquerda
-NodeAVL<T> AvlTree<T>::rotateRL(NodeAVL *z){
+template <typename T, typename Key> //rotacao dupla esquerda
+NodeAVL<T> AvlTree<T, Key>::rotateRL(NodeAVL *z){
     z->right = rotateR(z->right); //rsd no filho
     return rotateL(z); //rse na raiz
 }
