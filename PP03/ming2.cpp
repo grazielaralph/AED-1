@@ -4,7 +4,6 @@
 #include <algorithm>
 using namespace std;
 
-
 template<typename T>
 class Node {
 private:
@@ -25,14 +24,14 @@ T& Node<T>::getItem() { return item; }
 template<typename T>
 class ListNavigator{
 private:
-    Node<T>* current; //ponteiro que ira apontar pro item da vez
+    Node<T>* current; 
 public:
     ListNavigator(Node<T>* start): current(start){}
     bool begin();
-    bool end();//verifica se esta no final da fila
+    bool end();
     void next();
     void prev();
-    bool getCurrentItem(T&); //pega o item corrente
+    bool getCurrentItem(T&); 
 };
 
 template <typename T>
@@ -47,12 +46,12 @@ bool ListNavigator<T>::end(){
 
 template <typename T>
 void ListNavigator<T>::next(){
-    current = current->next; //o ponteiro do navigator recebe o endereco do proximo no
+    current = current->next; 
 }
 
 template <typename T>
 void ListNavigator<T>::prev(){
-    current = current->prev; //o ponteiro do navigator recebe o endereco do no anterior
+    current = current->prev; 
 }
 
 template <typename T>
@@ -60,7 +59,7 @@ bool ListNavigator<T>::getCurrentItem(T& item){
     if(current == nullptr){
         return false;
     }
-    item = current->getItem(); //pega o item cujo endereco esta armazenado no ponteiro "navegante"
+    item = current->getItem(); 
     return true;
 }
 
@@ -75,7 +74,6 @@ private:
     void succ(Node<T>*& p);
     void prev(Node<T>*& p);
 public:
-    //construtor
     Deque(){
         pFrontSent = new Node<T>{};
         pBackSent = new Node<T>{};
@@ -84,22 +82,19 @@ public:
         length=0;
     }
 
-    //destrutor
     ~Deque(){
         if(length!=0){
             Node<T>* p = pFrontSent->next;
             while(p != pBackSent){
                 Node<T>* next = p->next;
-                delete p; //apaga o no que p recebeu, no caso no corrente
+                delete p; 
                 p = next;
             }
         }
-        //mesmo que o deque esteja vazio, e necessario 
         delete pFrontSent;
         delete pBackSent;
     }
 
-    //metodos da classe
     void insertFront(T item);
     void insertBack(T item);
     void removeFront();
@@ -143,7 +138,7 @@ void Deque<T>::insertBack(T item){
 
 template <typename T>
 void Deque<T>::removeFront(){
-    if(empty()) return; //para nao deletar sentinela sem querer
+    if(empty()) return; 
     Node<T>* p = pFrontSent->next;
     pFrontSent->next = p->next;
     p->next->prev = pFrontSent; 
@@ -164,18 +159,15 @@ void Deque<T>::removeBack(){
 template <typename T>
 const T* Deque<T>::front() const{
     if(empty()){
-        cout<<"Deque vazio!";
         return nullptr;
     }else{
         return &pFrontSent->next->getItem();    
     }
 }
 
-
 template <typename T>
 const T* Deque<T>::back() const{
     if(empty()){
-        cout<<"Deque vazio!";
         return nullptr;
     }else{
         return &pBackSent->prev->getItem();
@@ -194,10 +186,7 @@ int Deque<T>::size(){
 
 template <typename T>
 bool Deque<T>::empty() const{
-    if(length == 0){
-        return true;
-    }
-    return false;
+    return length == 0;
 }
 
 //------------------------------------------------------------------------------------------
@@ -206,8 +195,8 @@ template<typename T>
 class NodeAVL {
 private:
     T item;
-    int height = 1;
 public:
+    int height = 1;
     NodeAVL<T>* left;
     NodeAVL<T>* right;
     NodeAVL(): left(nullptr),right(nullptr) {}
@@ -225,42 +214,39 @@ class AvlTree{
 private:
     NodeAVL<T>* root;
 
-    //metodos basicos recursivos
-    void insertRec(NodeAVL<T>*& node,const Key& key);
+    // Metodos basicos recursivos 
+    void insertRec(NodeAVL<T>*& node, const T& item);
     void deleteRec(NodeAVL<T>*& node, const Key& key);
     void preOrderRec(NodeAVL<T>* node);
     void inOrderRec(NodeAVL<T>* node);
     void postOrderRec(NodeAVL<T>* node);
     NodeAVL<T>* findMAXRec(NodeAVL<T>* node);
-    NodeAVL<T>*searchRec(NodeAVL<T>* node, const Key& key) const;
+    NodeAVL<T>* searchRec(NodeAVL<T>* node, const Key& key) const;
     bool updateRec(NodeAVL<T>* node, const Key& key, const T& newItem);
 
-    //metodos de balanceamento
-    void balance(NodeAVL<T>& node);
-    void updateHeight(NodeAVL<T>& node);
-    int height(NodeAVL<T> node);
-    int balFactor(NodeAVL<T> node);
+    // Metodos de balanceamento 
+    void balance(NodeAVL<T>*& node);
+    void updateHeight(NodeAVL<T>* node);
+    int height(NodeAVL<T>* node);
+    int balFactor(NodeAVL<T>* node);
 public:
-	AvlTree(): root(nullptr){};
+    AvlTree(): root(nullptr){};
 
-	//metodos basicos
-	void insert(T item);
-	T* findMAX();
-	void remove(Key key);
-	void preOrder();
-	void inOrder();
-	void postOrder();
+    void insert(T item);
+    T* findMAX();
+    void remove(Key key);
+    void preOrder();
+    void inOrder();
+    void postOrder();
     T* search(const Key& key);
     bool update (const Key& key, const T& newItem);
 
-	//metodos de rotacao
-	NodeAVL<T>* rotateR(NodeAVL<T>* y);
-	NodeAVL<T>* rotateL(NodeAVL<T>* x);
-	NodeAVL<T>* rotateLR(NodeAVL<T>* z);
-	NodeAVL<T>* rotateRL(NodeAVL<T>* z);
+    NodeAVL<T>* rotateR(NodeAVL<T>* y);
+    NodeAVL<T>* rotateL(NodeAVL<T>* x);
+    NodeAVL<T>* rotateLR(NodeAVL<T>* z);
+    NodeAVL<T>* rotateRL(NodeAVL<T>* z);
 };
 
-//findMax normal e recursivo rs
 template <typename T, typename Key>
 NodeAVL<T>* AvlTree<T, Key>::findMAXRec(NodeAVL<T>* node){
     if(node->right == nullptr){
@@ -270,14 +256,13 @@ NodeAVL<T>* AvlTree<T, Key>::findMAXRec(NodeAVL<T>* node){
 }
 
 template <typename T, typename Key>
-T*   AvlTree<T, Key>::findMAX(){
+T* AvlTree<T, Key>::findMAX(){
     if(root == nullptr){
         return nullptr;
     }
     return &findMAXRec(root)->getItem();
 }
 
-//metodos de percurso 
 template <typename T, typename Key>
 void AvlTree<T, Key>::preOrder(){
     preOrderRec(root);
@@ -293,7 +278,6 @@ void AvlTree<T, Key>::postOrder(){
     postOrderRec(root);
 }
 
-// no -> esquerda -> direita
 template <typename T, typename Key>
 void AvlTree<T, Key>::preOrderRec(NodeAVL<T>* node){
     if(node == nullptr){
@@ -304,7 +288,6 @@ void AvlTree<T, Key>::preOrderRec(NodeAVL<T>* node){
     preOrderRec(node->right);
 }
 
-// esquerda -> no -> direita
 template <typename T, typename Key>
 void AvlTree<T, Key>::inOrderRec(NodeAVL<T>* node){
     if(node == nullptr){
@@ -315,7 +298,6 @@ void AvlTree<T, Key>::inOrderRec(NodeAVL<T>* node){
     inOrderRec(node->right);
 }
 
-//esquerda -> direita -> no
 template <typename T, typename Key>
 void AvlTree<T, Key>::postOrderRec(NodeAVL<T>* node){
     if(node == nullptr){
@@ -326,7 +308,6 @@ void AvlTree<T, Key>::postOrderRec(NodeAVL<T>* node){
     cout << node->getItem().getKey();
 }
 
-//metodos basicos
 template <typename T, typename Key>
 int AvlTree<T, Key>::height(NodeAVL<T>* node){
     if(node == nullptr){
@@ -338,15 +319,15 @@ int AvlTree<T, Key>::height(NodeAVL<T>* node){
 template <typename T, typename Key>
 void AvlTree<T, Key>::insertRec(NodeAVL<T>*& node, const T& item){
     if(node == nullptr){
-        node = new NodeAVL<T>(key);
+        node = new NodeAVL<T>(item);
         return;
     }
-    if(key < node->getItem().getKey()){
-        insertRec(node->left, key);
-    }else if(key > node->getItem().getKey()){
-        insertRec(node->right, key);
+    if(item.getKey() < node->getItem().getKey()){
+        insertRec(node->left, item);
+    }else if(item.getKey() > node->getItem().getKey()){
+        insertRec(node->right, item);
     }else{
-        return; //chave duplicada
+        return; 
     }
 
     balance(node);
@@ -354,10 +335,9 @@ void AvlTree<T, Key>::insertRec(NodeAVL<T>*& node, const T& item){
 
 template <typename T, typename Key>
 void AvlTree<T, Key>::insert(T item){
-    insertRec(root, item.getKey());
+    insertRec(root, item);
 }
 
-//metodos de balanceamento
 template <typename T, typename Key>
 int AvlTree<T, Key>::balFactor(NodeAVL<T>* node){
     if(node == nullptr){
@@ -367,12 +347,16 @@ int AvlTree<T, Key>::balFactor(NodeAVL<T>* node){
 }
 
 template <typename T, typename Key>
-void AvlTree<T, Key>::updateHeight(NodeAVL<T>& node){
-    node->height = 1 + max(height(node->left), height(node->right));
+void AvlTree<T, Key>::updateHeight(NodeAVL<T>* node){
+    if(node != nullptr) {
+        node->height = 1 + max(height(node->left), height(node->right));
+    }
 }
 
 template <typename T, typename Key>
-void AvlTree<T, Key>::balance(NodeAVL<T>& node){
+void AvlTree<T, Key>::balance(NodeAVL<T>*& node){
+    if (node == nullptr) return;
+    
     updateHeight(node);
     int bf = balFactor(node);
 
@@ -393,9 +377,7 @@ void AvlTree<T, Key>::balance(NodeAVL<T>& node){
     }
 }
 
-
-//metodos de rotacao
-template <typename T, typename Key> //rotacao simples direita
+template <typename T, typename Key> 
 NodeAVL<T>* AvlTree<T, Key>::rotateR(NodeAVL<T>* y){
     NodeAVL<T> *x = y->left;
     NodeAVL<T> *T2 = x->right;
@@ -406,7 +388,7 @@ NodeAVL<T>* AvlTree<T, Key>::rotateR(NodeAVL<T>* y){
     return x;
 }
 
-template <typename T, typename Key> //rotacao simples esquerda
+template <typename T, typename Key> 
 NodeAVL<T>* AvlTree<T, Key>::rotateL(NodeAVL<T>* x){
     NodeAVL<T> *y = x->right;
     NodeAVL<T> *T2 = y->left;
@@ -417,19 +399,18 @@ NodeAVL<T>* AvlTree<T, Key>::rotateL(NodeAVL<T>* x){
     return y;
 }
 
-template <typename T, typename Key> //rotacao dupla direita
+template <typename T, typename Key> 
 NodeAVL<T>* AvlTree<T, Key>::rotateLR(NodeAVL<T>* z){
-    z->left = rotateL(z->left); //rse no filho
-    return rotateR(z); //rsd na raiz
+    z->left = rotateL(z->left); 
+    return rotateR(z); 
 }
 
-template <typename T, typename Key> //rotacao dupla esquerda
+template <typename T, typename Key> 
 NodeAVL<T>* AvlTree<T, Key>::rotateRL(NodeAVL<T>* z){
-    z->right = rotateR(z->right); //rsd no filho
-    return rotateL(z); //rse na raiz
+    z->right = rotateR(z->right); 
+    return rotateL(z); 
 }
 
-//metodos de remocao
 template <typename T, typename Key>
 void AvlTree<T, Key>::deleteRec(NodeAVL<T>*& node, const Key& key){
     if(node == nullptr){
@@ -438,43 +419,29 @@ void AvlTree<T, Key>::deleteRec(NodeAVL<T>*& node, const Key& key){
 
     if (key < node->getItem().getKey()) {
         deleteRec(node->left, key);
-
     } else if (key > node->getItem().getKey()) {
         deleteRec(node->right, key);
-
     } else {
-        //encontrou o no pra deletar
         if (node->left == nullptr && node->right == nullptr) {
-            //caso 1 - folha
             delete node;
             node = nullptr;
             return;
-
         } else if (node->left == nullptr) {
-            //caso 2 - so tem filho direito 
             NodeAVL<T>* temp = node;
             node = node->right;
             delete temp;
             return;
-
         } else if (node->right == nullptr) {
-            //caso 2 - so tem filho esquerdo
             NodeAVL<T>* temp = node;
             node = node->left;
             delete temp;
             return;
-
         } else {
-            //caso 3 - tem dois filhos (o mais dificil)
-            //pega o maior da subarvore esquerda (predecessor)
-            NodeAVL<T>* predecessor = findMaxRec(node->left);
-            node->getItem() = predecessor->getItem(); //copia o item
-            //deleta o predecessor na subarvore esquerda
+            NodeAVL<T>* predecessor = findMAXRec(node->left);
+            node->getItem() = predecessor->getItem(); 
             deleteRec(node->left, predecessor->getItem().getKey());
         }
     }
-
-    //balanceia no backtracking
     balance(node);
 }
 
@@ -483,51 +450,40 @@ void AvlTree<T, Key>::remove(Key key){
     deleteRec(root, key);
 }
 
-//metodos de busca
 template <typename T, typename Key>
 NodeAVL<T>* AvlTree<T, Key>::searchRec(NodeAVL<T>* node, const Key& key) const{
-    //subarvore vazia
     if(node == nullptr){
         return nullptr;
     }
 
-    //compara chave buscada com no atual
     if(key < node->getItem().getKey()) {
-        return searchRec(node->left, key); //busca na subarvore esquerda
+        return searchRec(node->left, key); 
     } else if(key > node->getItem().getKey()){
-        return searchRec(node->right, key); //busca na subarvore direita
+        return searchRec(node->right, key); 
     }else{
-        return node; //achamo a chave
+        return node; 
     }
 }
 
 template <typename T, typename Key>
 T* AvlTree<T, Key>::search(const Key& key){
     NodeAVL<T>* res = searchRec(root, key);
-
     if(res == nullptr){
         return nullptr;
     }
-
-    return &res->getItem(); //retorna o endereço do item contido no no 
+    return &res->getItem(); 
 }
-
-//metodos de alteracao
 
 template <typename T, typename Key>
 bool AvlTree<T, Key>::updateRec(NodeAVL<T>* node, const Key& key, const T& newItem) {
-    //verifica a existencia da subarvore
     if(node == nullptr){
         return false;
     }
 
-    //navega pra esquerda se a chave for menor
     if(key < node->getItem().getKey()){
         return updateRec(node->left, key, newItem);
-
-    } else if(key > node->getItem().getKey()){ //navega pra direita se a chave for maior
+    } else if(key > node->getItem().getKey()){ 
         return updateRec(node->right, key, newItem);
-    
     }else{
         node->getItem() = newItem;
         return true;
@@ -546,30 +502,26 @@ constexpr size_t hash(string_view s, size_t M){
     }
 
     size_t hashValue = 0;
-
     for(size_t i = 0; i < s.length(); i++){
         unsigned char c = static_cast <unsigned char>(s[i]);
         hashValue = (hashValue * 128 + c) % M;
     }
-
     return hashValue;
 }
 
 template <typename T>
 class HashTable{
 private:
-	Deque<T>* table; 
-	int M;
-    T lastFound; //guarda o ultimo item quebrado
+    Deque<T>* table; 
+    int M;
+    T lastFound; 
 public:
-    //construtor
     HashTable(int size): M(size){
         table = new Deque<T>[M];
     }
 
-    //destrutor
     ~HashTable(){
-        delete[]  table;
+        delete[] table;
     }
 
     void insert (T item);
@@ -581,29 +533,22 @@ void HashTable<T>::insert (T item){
     int index = ::hash(item.getKey(), M);
 
     if(!table[index].empty()){
-        //Percorre o deque desse indice procurando a chave
-    ListNavigator<T> nav = table[index].getDequeNavigator();
-    T current;
+        ListNavigator<T> nav = table[index].getDequeNavigator();
+        T current;
 
-    //caso o navigator encontre a chave, ele so atualiza o valor
-    while(nav.getCurrentItem(current)){
-        if(current.getKey() == item.getKey()){
-            table[index].removeFront();
-            table[index].insertBack(item);
-            return;
+        while(nav.getCurrentItem(current)){
+            if(current.getKey() == item.getKey()){
+                table[index].removeFront();
+                table[index].insertBack(item);
+                return;
+            }
+            if(nav.end()){
+                break;
+            }
+            nav.next();
         }
-        if(nav.end()){
-            break;
-        }
-        nav.next();
-
-        }
-   
     }
-
-    //se o navigator nao achar a chave, ele insere no final do deque
     table[index].insertBack(item); 
-    
 }
 
 template <typename T>
@@ -619,31 +564,25 @@ const T* HashTable<T>::search (string key){
 
     while(nav.getCurrentItem(current)){
         if(current.getKey() == key){
-            lastFound = current; //copia para o atributo da classe
+            lastFound = current; 
             return &lastFound;
         }
-
         if(nav.end()){
             break;
         }
-
         nav.next();
     }
-    
-
-    return nullptr; //quando nao achar 
+    return nullptr; 
 }
 
 //------------------------------------------------------------------------------------------
 
-//tipo de dado da avl 
 class IndexEntry{
 private:
     string word;
     string urls[200];
     int count = 0;
 public:
-    //construtores
     IndexEntry(){}
     IndexEntry(string w): word(w), count(0){}
 
@@ -656,12 +595,12 @@ public:
 
 bool IndexEntry::addUrl(string url){
     if(count>=200){
-        return false; //vetor ta cheio ja fi
+        return false; 
     }
 
     for(int i = 0; i < count; i++){
         if(urls[i] == url){
-            return false; //verifica se a url ja existe
+            return false; 
         }
     }
 
@@ -681,33 +620,21 @@ string IndexEntry::getUrl(int i) const{
     return urls[i];
 }
 
-
 void IndexEntry::printUrls(){
-    ListNavigator<string> nav = urls.getDequeNavigator();
-    string urlAtual;
-
-    while(nav.getCurrentItem(urlAtual)){
-        cout << urlAtual << endl;
-
-        if(nav.end()){
-            break;
-        }
-        nav.next();
+    for(int i = 0; i < count; i++) {
+        cout << urls[i] << endl;
     }
 }
 //------------------------------------------------------------------------------------------
 
-//tipo de dado da th_web
 class WebEntry{
 private:
     string url;
     string content;
 public: 
-    //construtores
     WebEntry(){}
     WebEntry(string u, string c): url(u), content(c) {}
 
-    //metodos
     string getKey() const;
     string getContent() const;
 };
@@ -722,12 +649,10 @@ string WebEntry::getContent() const{
 
 //------------------------------------------------------------------------------------------
 
-// tipo de dado da th_stop
 class StopWord{
 private:
     string word;
 public:
-    //construtores
     StopWord() {}
     StopWord(string w): word(w) {}
     
@@ -747,13 +672,10 @@ private:
     HashTable<StopWord> TH_STOP;
     Deque<string> tokenizar(string texto);
 public:
-    //construtor
     Ming(): TH_WEB(251), TH_STOP(97){}
 
-    //entrada de dados
     void indexarPagina(string url, string conteudo);
     void carregarStopWord(string palavra);
-    //consulta
     void buscar(string termo);
 };
 
@@ -780,18 +702,13 @@ Deque<string> Ming::tokenizar(string texto){
 }
 
 void Ming::indexarPagina(string url, string conteudo){
-    //armazenando pagina na th_web
-    WebEntry novaPagina(url, conteudo);
-    TH_WEB.insert(novaPagina);
+    TH_WEB.insert(WebEntry(url, conteudo));
 
-    //extraindo os tokens
     Deque<string> palavras = tokenizar(conteudo);
     ListNavigator<string> nav = palavras.getDequeNavigator();
     string palavraAtual;
 
-    //percorre as palavras e coloca em minuscula
     while(nav.getCurrentItem(palavraAtual)){
-
         transform(palavraAtual.begin(), palavraAtual.end(), palavraAtual.begin(), ::tolower);
 
         if(TH_STOP.search(palavraAtual) != nullptr){
@@ -802,7 +719,6 @@ void Ming::indexarPagina(string url, string conteudo){
             continue;
         }
 
-        //insere ou atualiza na avl
         IndexEntry* existente = AVL_INDICE.search(palavraAtual);
 
         if(existente == nullptr){
@@ -820,16 +736,11 @@ void Ming::indexarPagina(string url, string conteudo){
         }   
         nav.next();
     }
-
 }
 
 void Ming::carregarStopWord(string palavra){
-    //converte pra minusculo
     transform(palavra.begin(), palavra.end(), palavra.begin(), ::tolower);
-
-    //instancia a stopword e coloca na tabela hash
-    StopWord novaStop(palavra);
-    TH_STOP.insert(novaStop);
+    TH_STOP.insert(StopWord(palavra));
 }
 
 void Ming::buscar(string consulta){
@@ -860,19 +771,16 @@ void Ming::buscar(string consulta){
         return;
     }
 
-    
     string resultadoUrls[200];
     int qtdUrlsResultado = 0;
 
     IndexEntry* nPrimeiro = AVL_INDICE.search(primeiraPalavra);
-
     
     if (nPrimeiro == nullptr) {
         cout << "Nenhum resultado." << endl;
         return;
     }
 
-    
     int totalPrimeiro = nPrimeiro->getCount();
     for(int i = 0; i < totalPrimeiro; i++) {
         if (qtdUrlsResultado < 200) {
@@ -880,7 +788,6 @@ void Ming::buscar(string consulta){
         }
     }
 
-    
     if(!navValidos.end()){
         navValidos.next(); 
         string proximaPalavra;
@@ -888,7 +795,6 @@ void Ming::buscar(string consulta){
         while(navValidos.getCurrentItem(proximaPalavra)){
             IndexEntry* nProximo = AVL_INDICE.search(proximaPalavra);
 
-            
             if (nProximo == nullptr) {
                 cout << "Nenhum resultado." << endl;
                 return;
@@ -897,7 +803,6 @@ void Ming::buscar(string consulta){
             string intersecaoRodada[200]; 
             int qtdIntersecao = 0;
 
-            
             for (int i = 0; i < qtdUrlsResultado; i++){
                 string urlParaVerificar = resultadoUrls[i];
                 bool encontrou = false;
@@ -915,7 +820,6 @@ void Ming::buscar(string consulta){
                 }
             }
             
-            
             qtdUrlsResultado = qtdIntersecao;
             for (int i = 0; i < qtdUrlsResultado; i++) {
                 resultadoUrls[i] = intersecaoRodada[i];
@@ -926,13 +830,11 @@ void Ming::buscar(string consulta){
         }
     }
 
-    
     if (qtdUrlsResultado == 0) {
         cout << "Nenhum resultado." << endl;
         return;
     }
 
-    
     for (int i = 0; i < qtdUrlsResultado - 1; i++) {
         for (int j = 0; j < qtdUrlsResultado - i - 1; j++) {
             if (resultadoUrls[j] > resultadoUrls[j + 1]) {
@@ -943,7 +845,6 @@ void Ming::buscar(string consulta){
         }
     }
 
-    
     for (int i = 0; i < qtdUrlsResultado; i++) {
         cout << resultadoUrls[i] << endl;
     }
@@ -953,7 +854,6 @@ void Ming::buscar(string consulta){
 int main(){
     Ming sistema;
 
-    //preenchendo o ming com as stop words
     string stopWords[] = {
         "a", "an", "the", "this", "that", "these", "those", "it", "its", "he", "she", "they", "we", "you", "i", "his", "her", "their", "our", "my",
         "of", "in", "on", "at", "to", "for", "by", "with", "from", "into", "over", "under", "about", "and", "or", "but", "nor", "so", "yet", "as",
@@ -964,26 +864,25 @@ int main(){
         sistema.carregarStopWord(sw);
     }
     
-    int N; //quantidade de paginas a serem lidas
-    if(!(cin >> N)){
+    int N; 
+    if(!(cin >> N)) {
         return 0;
     }
     string linha;
-    getline(cin, linha); //consome o fim de linha apos o numero N
+    getline(cin, linha); 
 
     for(int i = 0; i < N; i++){
         string url = "";
         string conteudoPagina = "";
 
         while(getline(cin, linha)){
-            //se achou a linha de abertura, extrai a url
             if(linha.find("<page url=") != string::npos){
-                size_t inicio = linha.find("\"") + 1;
-                size_t fim = linha.find("\"", inicio);
-                url = linha.substr(inicio, fim - inicio);
-            } else if(linha.find("</page>") != string::npos){  //se achou a linha de fechamento, encerra a leitura dessa pagina
+                size_t inicio_real = linha.find("\"") + 1;
+                size_t fim = linha.find("\"", inicio_real);
+                url = linha.substr(inicio_real, fim - inicio_real);
+            } else if(linha.find("</page>") != string::npos){  
                 break;
-            }else if(linha.find("<a href=") != string::npos){ //ignora as linhas de hyperlink
+            }else if(linha.find("<a href=") != string::npos){ 
                 continue;
             }else{
                 if(!linha.empty()){
@@ -992,17 +891,15 @@ int main(){
                     }
                     conteudoPagina += linha;
                 }
-
             }
         }
         sistema.indexarPagina(url, conteudoPagina);
     }
 
-    //realizar a busca
     string consulta;
     if(getline(cin, consulta)){
         sistema.buscar(consulta);
     } 
 
-	return 0;
+    return 0;
 }
