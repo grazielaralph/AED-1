@@ -232,6 +232,7 @@ private:
     void inOrderRec(NodeAVL<T>* node);
     void postOrderRec(NodeAVL<T>* node);
     NodeAVL<T>* findMAXRec(NodeAVL<T>* node);
+    NodeAVL<T>*searchRec(NodeAVL<T>* node, const Key& key) const;
 
     //metodos de balanceamento
     void balance(NodeAVL<T>& node);
@@ -248,6 +249,7 @@ public:
 	void preOrder();
 	void inOrder();
 	void postOrder();
+    T* search(const Key& key);
 
 	//metodos de rotacao
 	NodeAVL<T>* rotateR(NodeAVL<T>* y);
@@ -332,7 +334,7 @@ int AvlTree<T, Key>::height(NodeAVL<T>* node){
 }
 
 template <typename T, typename Key>
-void AvlTree<T, Key>::insertRec(NodeAVL<T>*& node, const Key& key){
+void AvlTree<T, Key>::insertRec(NodeAVL<T>*& node, const T& item){
     if(node == nullptr){
         node = new NodeAVL<T>(key);
         return;
@@ -350,7 +352,7 @@ void AvlTree<T, Key>::insertRec(NodeAVL<T>*& node, const Key& key){
 
 template <typename T, typename Key>
 void AvlTree<T, Key>::insert(T item){
-    insertRec(root, key);
+    insertRec(root, item.getKey());
 }
 
 //metodos de balanceamento
@@ -477,6 +479,35 @@ void AvlTree<T, Key>::deleteRec(NodeAVL<T>*& node, const Key& key){
 template <typename T, typename Key>
 void AvlTree<T, Key>::remove(Key key){
     deleteRec(root, key);
+}
+
+//metodos de busca
+template <typename T, typename Key>
+NodeAVL<T>* AvlTree<T, Key>::searchRec(NodeAVL<T>* node, const Key& key) const{
+    //subarvore vazia
+    if(node == nullptr){
+        return nullptr;
+    }
+
+    //compara chave buscada com no atual
+    if(key < node->getItem().getKey()) {
+        return searchRec(node->left, key); //busca na subarvore esquerda
+    } else if(key > node->getItem().getKey()){
+        return searchRec(node->right, key); //busca na subarvore direita
+    }else{
+        return node; //achamo a chave
+    }
+}
+
+template <typename T, typename Key>
+T* AvlTree<T, Key>::search(const Key& key){
+    NodeAVL<T>* res = searchRec(root, key);
+
+    if(res == nullptr){
+        return nullptr;
+    }
+    
+    return &res->getItem(); //retorna o endereço do item contido no no 
 }
 
 //------------------------------------------------------------------------------------------
@@ -653,7 +684,7 @@ private:
     string word;
 public:
     //construtores
-    StopWord():{}
+    StopWord(){}
     StopWord(string w): word(w) {}
     
     string getKey() const;
@@ -670,19 +701,46 @@ private:
     AvlTree<IndexEntry, string> AVL_INDICE;
     HashTable<WebEntry> TH_WEB;
     HashTable<StopWord> TH_STOP;
+    Deque<string> tokenizar(string texto);
 public:
     //construtor
     Ming(): TH_WEB(251), TH_STOP(97){}
+
+    //entrada de dados
+    void indexarPagina(string url, string conteudo);
+    void carregarStopWord(string palavra);
+    //consulta
+    void buscar(string termo);
+};
+
+Deque<string> Ming::tokenizar(string texto){
+    Deque<string> tokens;
+    string atual = "";
+
+    for(char c : texto){
+        if (c == ' '){
+            if(!atual.empty()){
+                tokens.insertBack(atual);
+                atual = "";
+            }
+        }else{
+            atual += c;
+        }
+    }
+
+    if(!atual.empty()){
+        tokens.insertBack(atual);
+    }
+
+    return tokens;
+}
+
+void Ming::indexarPagina(string url, string conteudo){
 
 }
 
 //------------------------------------------------------------------------------------------
 int main(){
-    //colocar na classe Ming
-    int M = 251; //tamanho da tabela hash que mapeia as url's ao conteudo da pagina
-    int N = 97; //tamanho da tabela de stopwords, so tem chave
-
-
-
+    
 	return 0;
 }
