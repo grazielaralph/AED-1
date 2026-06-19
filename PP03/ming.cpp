@@ -242,7 +242,7 @@ public:
 	AvlTree(): root(nullptr){};
 
 	//metodos basicos
-	void insert(Key key);
+	void insert(T item);
 	T* findMAX();
 	void remove(Key key);
 	void preOrder();
@@ -349,7 +349,7 @@ void AvlTree<T, Key>::insertRec(NodeAVL<T>*& node, const Key& key){
 }
 
 template <typename T, typename Key>
-void AvlTree<T, Key>::insert(Key key){
+void AvlTree<T, Key>::insert(T item){
     insertRec(root, key);
 }
 
@@ -576,6 +576,113 @@ const T* HashTable<T>::search (string key){
 
 //------------------------------------------------------------------------------------------
 
+//tipo de dado da avl 
+class IndexEntry{
+private:
+    string word;
+    string urls[200];
+    int count = 0;
+public:
+    //construtores
+    IndexEntry(){}
+    IndexEntry(string w): word(w), count(0){}
+
+    bool addUrl(string url);
+    string getKey() const;
+    int getCount() const;
+    string getUrl(int i) const;
+};
+
+bool IndexEntry::addUrl(string url){
+    if(count>=200){
+        return false; //vetor ta cheio ja fi
+    }
+
+    for(int i = 0; i < count; i++){
+        if(urls[i] == url){
+            return false; //verifica se a url ja existe
+        }
+    }
+
+    urls[count++] = url;
+    return true;
+}
+
+string IndexEntry::getKey() const{
+    return word;
+}
+
+int IndexEntry::getCount() const{
+    return count;
+}
+
+string IndexEntry::getUrl(int i) const{
+    return urls[i];
+}
+
+//------------------------------------------------------------------------------------------
+
+//tipo de dado da th_web
+class WebEntry{
+private:
+    string url;
+    string content;
+public: 
+    //construtores
+    WebEntry(){}
+    WebEntry(string u, string c): url(u), content(c) {}
+
+    //metodos
+    string getKey() const;
+    string getContent() const;
+};
+
+string WebEntry::getKey() const{
+    return url;
+}
+
+string WebEntry::getContent() const{
+    return content;
+}
+
+//------------------------------------------------------------------------------------------
+
+// tipo de dado da th_stop
+class StopWord{
+private:
+    string word;
+public:
+    //construtores
+    StopWord():{}
+    StopWord(string w): word(w) {}
+    
+    string getKey() const;
+};
+
+string StopWord::getKey() const{
+    return word;
+}
+
+//------------------------------------------------------------------------------------------
+
+class Ming{
+private:
+    AvlTree<IndexEntry, string> AVL_INDICE;
+    HashTable<WebEntry> TH_WEB;
+    HashTable<StopWord> TH_STOP;
+public:
+    //construtor
+    Ming(): TH_WEB(251), TH_STOP(97){}
+
+}
+
+//------------------------------------------------------------------------------------------
 int main(){
+    //colocar na classe Ming
+    int M = 251; //tamanho da tabela hash que mapeia as url's ao conteudo da pagina
+    int N = 97; //tamanho da tabela de stopwords, so tem chave
+
+
+
 	return 0;
 }
