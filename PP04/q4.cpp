@@ -38,7 +38,6 @@ private:
     int length = 0;
     void succ(Node<T>*& p) { p = p->next; }
 public:
-    // first é nó sentinela; last aponta para o último nó real (ou first se vazio)
     SinglyLinkedList() { first = new Node<T>{}; last = first; length = 0; }
     bool empty() { return length == 0; }
     void insert(T item) { last->next = new Node<T>(item); succ(last); length++; }

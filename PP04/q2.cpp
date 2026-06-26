@@ -32,7 +32,7 @@ public:
     BST() : root(nullptr) {}
     void insert(const Item<T>& x) { insert(x, root); }
 
-    // Correção: trocado p->left por p->right (o máximo está no nó mais à direita)
+    // troca p->left por p->right
     int max() {
         Node<T>* p = root;
         while (p->right != nullptr)

@@ -35,7 +35,6 @@ public:
     int maxLevelSum() {
         if (root == nullptr) return 0;
 
-        // Fila manual com array (N <= 50, logo no máximo 50 nós)
         Node<T>* queue[64];
         int head = 0, tail = 0;
         queue[tail++] = root;
